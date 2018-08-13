@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JamesNgo-CoT/commonscript.git"
+    "url": "git+https://github.com/JamesNgo-CoT/commonscripts.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/JamesNgo-CoT/commonscript/issues"
+    "url": "https://github.com/JamesNgo-CoT/commonscripts/issues"
   },
-  "homepage": "https://github.com/JamesNgo-CoT/commonscript#readme",
+  "homepage": "https://github.com/JamesNgo-CoT/commonscripts#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
