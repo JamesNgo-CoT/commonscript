@@ -7,7 +7,7 @@
 	"extends": "eslint:recommended",
 	"globals": {
 		"_": true,
-		"backbone": true
+		"Backbone": true
 	},
 	"parserOptions": {
 		"ecmaVersion": 6,

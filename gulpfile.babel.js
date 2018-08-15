@@ -121,7 +121,8 @@ export function watch() {
 
 	const jsTemplate = './src/**/*.template.js';
 	gulp.watch((Array.isArray(buildJsSrc) ? buildJsSrc : [buildJsSrc]).concat(
-		Array.isArray(jsTemplate) ? jsTemplate : [jsTemplate]
+		Array.isArray(jsTemplate) ? jsTemplate : [jsTemplate],
+		Array.isArray(htmlTemplate) ? htmlTemplate : [htmlTemplate]
 	), buildJs);
 }
 
