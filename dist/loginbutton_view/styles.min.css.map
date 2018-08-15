@@ -1,0 +1,1 @@
+{"version":3,"sources":["styles.min.css"],"names":[],"mappings":"AAAA,iBACE,kBAAmB,AACnB,WAAY,AACZ,OAAS,CAAE","file":"styles.min.css","sourcesContent":[".LoginButtonView {\n  position: absolute;\n  right: 60px;\n  top: 7px; }\n"]}
