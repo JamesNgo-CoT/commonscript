@@ -1,0 +1,49 @@
+#maincontent .DataTableView .dataTables_wrapper,
+.DataTableView .dataTables_wrapper {
+  margin: 10px 0 0 0; }
+  #maincontent .DataTableView .dataTables_wrapper .dataTables_filter,
+  .DataTableView .dataTables_wrapper .dataTables_filter {
+    margin: 0 0 10px 0; }
+    #maincontent .DataTableView .dataTables_wrapper .dataTables_filter label,
+    .DataTableView .dataTables_wrapper .dataTables_filter label {
+      margin-bottom: 0; }
+  #maincontent .DataTableView .dataTables_wrapper .dataTables_info,
+  .DataTableView .dataTables_wrapper .dataTables_info {
+    margin: 0 0 10px 0;
+    padding: 7px 0; }
+  #maincontent .DataTableView .dataTables_wrapper .dataTables_length,
+  .DataTableView .dataTables_wrapper .dataTables_length {
+    margin: 0 0 10px 0; }
+    #maincontent .DataTableView .dataTables_wrapper .dataTables_length label,
+    .DataTableView .dataTables_wrapper .dataTables_length label {
+      margin-bottom: 0; }
+  #maincontent .DataTableView .dataTables_wrapper .dataTables_paginate,
+  .DataTableView .dataTables_wrapper .dataTables_paginate {
+    margin: 0 0 10px 0; }
+    #maincontent .DataTableView .dataTables_wrapper .dataTables_paginate:after,
+    .DataTableView .dataTables_wrapper .dataTables_paginate:after {
+      content: "";
+      display: table;
+      clear: both; }
+    #maincontent .DataTableView .dataTables_wrapper .dataTables_paginate ul.pagination,
+    .DataTableView .dataTables_wrapper .dataTables_paginate ul.pagination {
+      float: right;
+      padding: 0; }
+  #maincontent .DataTableView .dataTables_wrapper .table-responsive,
+  .DataTableView .dataTables_wrapper .table-responsive {
+    margin: 0 0 10px 0; }
+    #maincontent .DataTableView .dataTables_wrapper .table-responsive table.dataTable,
+    .DataTableView .dataTables_wrapper .table-responsive table.dataTable {
+      margin: 0 !important; }
+      #maincontent .DataTableView .dataTables_wrapper .table-responsive table.dataTable td, #maincontent .DataTableView .dataTables_wrapper .table-responsive table.dataTable th,
+      .DataTableView .dataTables_wrapper .table-responsive table.dataTable td,
+      .DataTableView .dataTables_wrapper .table-responsive table.dataTable th {
+        min-width: 200px; }
+      #maincontent .DataTableView .dataTables_wrapper .table-responsive table.dataTable tfoot td input,
+      #maincontent .DataTableView .dataTables_wrapper .table-responsive table.dataTable tfoot td select,
+      .DataTableView .dataTables_wrapper .table-responsive table.dataTable tfoot td input,
+      .DataTableView .dataTables_wrapper .table-responsive table.dataTable tfoot td select {
+        width: 100%; }
+  #maincontent .DataTableView .dataTables_wrapper .dt-buttons,
+  .DataTableView .dataTables_wrapper .dt-buttons {
+    display: none; }
