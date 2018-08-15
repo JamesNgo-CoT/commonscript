@@ -1,0 +1,10 @@
+<!-- scripts.template html -->
+<% if (cotLogin.sid) { %>
+<button type="button" class="btn btn-default btn-logout hidden-print">
+	Logout: <strong><%- [cotLogin.lastName, cotLogin.firstName].filter((value) => value).join(', ') || '' %></strong>
+</button>
+ <% } else { %>
+<button type="button" class="btn btn-default btn-login hidden-print">
+	Login
+</button>
+ <% } %>
