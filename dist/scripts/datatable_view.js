@@ -40,9 +40,7 @@ var DataTableView = Backbone.View.extend({
 		}
 	},
 
-	render: function render() {},
-
-	render2: function render2() {
+	render: function render() {
 		var _this = this;
 
 		var configuration = _.result(this, 'configuration');
@@ -159,6 +157,15 @@ var DataTableView = Backbone.View.extend({
 			_this.delegateEvents();
 
 			return Promise.all(postRenderPromises);
+		}).catch(function (error) {
+			if (error) {
+				alert('An error occured. ' + error);
+				/* eslint-disable no-console */
+				if (window.console && console.error) {
+					console.error(error);
+				}
+				/* eslint-enable no-console */
+			}
 		});
 	}
 }, {

@@ -148,6 +148,15 @@ const DataTableView = Backbone.View.extend({
 			this.delegateEvents();
 
 			return Promise.all(postRenderPromises);
+		}).catch((error) => {
+			if (error) {
+				alert(`An error occured. ${error}`);
+				/* eslint-disable no-console */
+				if (window.console && console.error) {
+					console.error(error);
+				}
+				/* eslint-enable no-console */
+			}
 		});
 	}
 }, {
