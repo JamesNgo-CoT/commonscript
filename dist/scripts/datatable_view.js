@@ -68,6 +68,7 @@ var DataTableView = Backbone.View.extend({
 			var dt_configuration = $.extend({
 				orderCellsTop: true
 			}, configuration);
+
 			if (configuration['serverSide'] === true) {
 				$.extend(dt_configuration, {
 					ajax: function ajax(data, callback) {
@@ -462,7 +463,7 @@ var DataTableView = Backbone.View.extend({
 					}
 				}).then(function () {
 					if (column.choices) {
-						if (column.choices.length === 0 || column.choices[0].value !== '') {
+						if (column.choices.length === 0 || column.choices[0].value != null && column.choices[0].value !== '' || column.choices[0].value == null && column.choices[0].text !== '') {
 							column.choices.unshift({ text: '' });
 						}
 						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {

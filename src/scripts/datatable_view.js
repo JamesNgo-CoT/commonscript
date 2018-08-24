@@ -60,6 +60,7 @@ const DataTableView = Backbone.View.extend({
 			const dt_configuration = $.extend({
 				orderCellsTop: true
 			}, configuration);
+
 			if (configuration['serverSide'] === true) {
 				$.extend(dt_configuration, {
 					ajax: (data, callback) => {
@@ -449,7 +450,7 @@ const DataTableView = Backbone.View.extend({
 						}
 					}).then(() => {
 						if (column.choices) {
-							if (column.choices.length === 0 || column.choices[0].value !== '') {
+							if (column.choices.length === 0 || (column.choices[0].value != null && column.choices[0].value !== '') || (column.choices[0].value == null && column.choices[0].text !== '')) {
 								column.choices.unshift({ text: '' });
 							}
 							column.headerHtml = `
