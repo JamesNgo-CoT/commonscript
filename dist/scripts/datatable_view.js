@@ -21,6 +21,10 @@ var DataTableView = Backbone.View.extend({
 
 	// METHOD DEFINITION
 
+	clearFilters: function clearFilters() {
+		$('thead input, thead select, tfoot input, tfoot select', this.$el).val('').change();
+	},
+
 	reload: function reload(callback) {
 		var resetPaging = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 

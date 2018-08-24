@@ -60,6 +60,10 @@
 								width: 100%;
 							}
 						}
+
+						td {
+							border-top: 2px solid #346488;
+						}
 					}
 				}
 
@@ -67,6 +71,12 @@
 					tr:first-child {
 						th {
 							border-bottom: 0;
+
+							&.sorting,
+							&.sorting_asc,
+							&.sorting_desc {
+								padding-right: 30px;
+							}
 						}
 					}
 				}

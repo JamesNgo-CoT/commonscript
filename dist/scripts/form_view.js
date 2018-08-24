@@ -43,7 +43,7 @@ var FormView = Backbone.View.extend({
 					}
 				}).then(function () {
 					return new Promise(function (resolve, reject) {
-						_this.model.save().then(function (data, textStatus, jqXHR) {
+						_this.model.save({ $originatingElement: $(options.originatingElementSelector || '.btn-submit', _this.$el) }).then(function (data, textStatus, jqXHR) {
 							_this.trigger('saved', data, textStatus, jqXHR);
 							resolve(data);
 						}, function (jqXHR, textStatus, errorThrown) {

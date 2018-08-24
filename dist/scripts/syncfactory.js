@@ -4,6 +4,7 @@
 function syncFactory(sync, cotLogin) {
 	var _this = this;
 
+	var syncCounter = 0;
 	var newSync = function newSync(method, model) {
 		var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 		var attempt = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
@@ -29,7 +30,12 @@ function syncFactory(sync, cotLogin) {
 
 			options['contentType'] = options['contentType'] || 'application/json';
 
-			sync.call(_this, method, model, options).then(deferred.resolve, function (jqXHR, textStatus, errorThrown) {
+			syncCounter = syncCounter + 1;
+			Backbone.trigger('sync', 'on', syncCounter);
+			Backbone.trigger('sync:on', syncCounter);
+			sync.call(_this, method, model, options).then(function (data, textStatus, jqXHR) {
+				deferred.resolve(data, textStatus, jqXHR);
+			}, function (jqXHR, textStatus, errorThrown) {
 				if (jqXHR.status >= 500 && jqXHR.status <= 599) {
 					errorThrown = 'Server side error. Please contact your administrator.';
 				} else if (jqXHR.status === 400 && !jqXHR.responseJSON && jqXHR.responseText && jqXHR.responseText.indexOf('Session id') !== -1 && jqXHR.responseText.indexOf('is invalid') !== -1) {
@@ -57,6 +63,15 @@ function syncFactory(sync, cotLogin) {
 				}
 
 				deferred.reject(jqXHR, textStatus, errorThrown);
+			}).always(function () {
+				if (syncCounter > 0) {
+					syncCounter = syncCounter - 1;
+				} else {
+					syncCounter = 0;
+				}
+
+				Backbone.trigger('sync', 'off', syncCounter);
+				Backbone.trigger('sync:off', syncCounter);
 			});
 		}, function () {
 			deferred.reject(null, null, 'Login Required');

@@ -17,6 +17,10 @@ const DataTableView = Backbone.View.extend({
 
 	// METHOD DEFINITION
 
+	clearFilters: function() {
+		$('thead input, thead select, tfoot input, tfoot select', this.$el).val('').change();
+	},
+
 	reload: function (callback, resetPaging = false) {
 		if (this.dataTable) {
 			this.dataTable.ajax.reload(callback, resetPaging);
