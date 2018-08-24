@@ -1,0 +1,28 @@
+<!-- datatable_view.template.html -->
+<div class="row">
+	<div class="col-xs-12">
+		<table width="100%" class="table table-bordered">
+			<thead>
+				<tr>
+					<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
+					<th>
+						<%- _.result(configuration.columns[index], 'title') || _.result(configuration.columns[index], 'data', '') %>
+						<div data-index="<%- index %>">
+						</div>
+					</th>
+					<% } %>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			<tfoot>
+				<tr>
+					<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
+					<td data-index="<%- index %>">
+						<%= _.result($.extend({view: view }, configuration.columns[index]), 'footerHtml', '') %>
+					</td>
+					<% } %>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>

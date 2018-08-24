@@ -1,0 +1,20 @@
+#maincontent .FormView,
+.FormView {
+	form {
+		a.btn {
+			text-decoration: none;
+
+			&.btn-default {
+			color: #333;
+			}
+		}
+
+		button {
+			margin: 0;
+		}
+
+		div.form-group {
+			margin-bottom: 1rem;
+		}
+	}
+}

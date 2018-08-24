@@ -1,0 +1,76 @@
+#maincontent .DataTableView,
+.DataTableView {
+	button {
+		margin: 0;
+	}
+
+	div.dataTables_wrapper {
+		margin: 10px 0 0 0;
+
+		div.dataTables_filter {
+			margin: 0 0 10px 0;
+
+			label {
+				margin-bottom: 0;
+			}
+		}
+
+		div.dataTables_info {
+			margin: 0 0 10px 0;
+			padding: 7px 0;
+		}
+
+		div.dataTables_length {
+			margin: 0 0 10px 0;
+
+			label {
+				margin-bottom: 0;
+			}
+		}
+
+		div.dataTables_paginate {
+			margin: 0 0 10px 0;
+
+			&:after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+
+			ul.pagination {
+				float: right;
+				padding: 0;
+			}
+		}
+
+		div.table-responsive {
+			margin: 0 0 10px 0;
+
+			table.dataTable {
+				margin: 0 !important;
+
+				td, th {
+					min-width: 200px;
+
+					&.col-view {
+						min-width: 60px;
+						width: 60px;
+					}
+				}
+
+				tfoot {
+					td {
+						input,
+						select {
+							width: 100%;
+						}
+					}
+				}
+			}
+		}
+
+		div.dt-buttons {
+			display: none;
+		}
+	}
+}
