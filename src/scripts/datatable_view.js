@@ -37,6 +37,7 @@ const DataTableView = Backbone.View.extend({
 	render: function () {
 		const configuration = _.result(this, 'configuration');
 		const columns = configuration.columns = _.result(configuration, 'columns');
+		const serverSide = configuration.serverSide = _.result(configuration, 'serverSide');
 
 		return Promise.resolve(this.removeDataTable()).then(() => {
 
@@ -61,9 +62,10 @@ const DataTableView = Backbone.View.extend({
 				orderCellsTop: true
 			}, configuration);
 
-			if (configuration['serverSide'] === true) {
+			if (serverSide === true) {
 				$.extend(dt_configuration, {
 					ajax: (data, callback) => {
+
 						// TODO.
 						// const defaultFetchParameters = _.result(this.collection, 'fetchParameters');
 
@@ -83,7 +85,22 @@ const DataTableView = Backbone.View.extend({
 
 						// $orderby
 						const $orderby = data.order
-							.map((value) => `${data.columns[value.column].data} ${value.dir}`)
+							.map((value) => {
+								let orderBy = data.columns[value.column].data;
+
+								const configOrderBy = _.result(configuration.columns[value.column], 'orderBy');
+								const configDataType = _.result(configuration.columns[value.column], 'dataType');
+
+								if (configOrderBy) {
+									orderBy = configOrderBy;
+								} else if (configDataType) {
+									if (configDataType === 'string') {
+										orderBy = `tolower(${orderBy})`;
+									}
+								}
+
+								return `${orderBy} ${value.dir}`;
+							})
 							.join(',');
 						if ($orderby) {
 							fetchParameters['$orderby'] = $orderby;
