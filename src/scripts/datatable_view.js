@@ -57,11 +57,12 @@ const DataTableView = Backbone.View.extend({
 		}).then(() => {
 
 			// RENDER DATATABLE
-			const dt_configuration = $.extend({}, configuration);
+			const dt_configuration = $.extend({
+				orderCellsTop: true
+			}, configuration);
 			if (configuration['serverSide'] === true) {
 				$.extend(dt_configuration, {
 					ajax: (data, callback) => {
-
 						// TODO.
 						// const defaultFetchParameters = _.result(this.collection, 'fetchParameters');
 
@@ -426,45 +427,88 @@ const DataTableView = Backbone.View.extend({
 		//////////////////////////////////////////////////////////////////////////////
 
 		preRenders: {
-			'searchFooterFactory': (columnFilter) => {
+			'filterHtmlFactory': (columnFilter) => {
 				if (typeof columnFilter === 'string') {
 					columnFilter = DataTableView.columnFilters[columnFilter];
 				}
 				return (column, configuration, view) => {
 					return Promise.resolve().then(() => {
-						//     if (column.choices && typeof column.choices === 'string') {
-						//       const url = column.choices;
-						//       column.choices = [];
-						//       return fetchConfigurations(url, column.choices);
-						//     }
-						//   }).then(() => {
+						if (column.choices && typeof column.choices === 'string') {
+							return new Promise((resolve) => {
+								const url = column.choices;
+								column.choices = [];
+								$.getJSON(url).then((data) => {
+									if (Array.isArray(data)) {
+										column.choices = data;
+									}
+									resolve();
+								}, () => {
+									resolve();
+								});
+							});
+						}
+					}).then(() => {
 						if (column.choices) {
+							if (column.choices.length === 0 || column.choices[0].value !== '') {
+								column.choices.unshift({ text: '' });
+							}
+							column.headerHtml = `
+								<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
+								<select class="form-control" id="${column.data}_header_${view.cid}">
+									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>').join('')}
+								</select>
+							`;
 							column.footerHtml = `
-            <label class="sr-only" for="${column.data}_${view.cid}">Search ${column.title || column.data}</label>
-            <select class="form-control" id="${column.data}_${view.cid}">
-              ${column.choices[0].value != null ? (column.choices[0].value != '' ? '<option value=""></option>' : '') : (column.choices[0].text != '' ? '<option value=""></option>' : '')}
-              ${column.choices.map((choice) => '<option value="' + (choice.value !== null ? choice.value : choice.text) + '">' + choice.text + '</option>').join('')}
-            </select>
-          `;
+								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
+								<select class="form-control" id="${column.data}_footer_${view.cid}">
+									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>').join('')}
+								</select>
+							`;
 						} else {
+							column.headerHtml = `
+								<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
+								<input type="text" class="form-control" id="${column.data}_header_${view.cid}">
+							`;
 							column.footerHtml = `
-            <label class="sr-only" for="${column.data}_${view.cid}">Search ${column.title || column.data}</label>
-            <input type="text" class="form-control" id="${column.data}_${view.cid}">
-          `;
+								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
+								<input type="text" class="form-control" id="${column.data}_footer_${view.cid}">
+							`;
 						}
 
 						if (!column.events) {
 							column.events = {};
 						}
 
-						column.events[`change #${column.data}_${view.cid}`] = (event) => {
-							const $input = $(event.currentTarget);
-							columnFilter(configuration.serverSide, $input.val(), view.dataTable.column(+$input.closest('td').data('index')))
-						}
-						column.events[`keyup #${column.data}_${view.cid}`] = (event) => {
-							const $input = $(event.currentTarget);
-							columnFilter(configuration.serverSide, $input.val(), view.dataTable.column(+$input.closest('td').data('index')))
-						}
+						const synceValue = (value) => {
+							const $headerInput = $(`#${column.data}_header_${view.cid}`);
+							if ($headerInput.val() !== value ) {
+								$headerInput.val(value);
+							}
+							const $footerInput = $(`#${column.data}_footer_${view.cid}`);
+							if ($footerInput.val() !== value ) {
+								$footerInput.val(value);
+							}
+						};
+
+						const changeHandler = (event) => {
+							const $input = $(event.target);
+							const value = $input.val();
+							const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+							synceValue(value);
+							columnFilter(configuration.serverSide, value, view.dataTable.column(index));
+						};
+						column.events[`change #${column.data}_header_${view.cid}`] = changeHandler;
+						column.events[`change #${column.data}_footer_${view.cid}`] = changeHandler;
+
+						const keyupHandler = (event) => {
+							const $input = $(event.target);
+							const value = $input.val();
+							const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+							synceValue(value);
+							columnFilter(configuration.serverSide, value, view.dataTable.column(index));
+						};
+						column.events[`keyup #${column.data}_header_${view.cid}`] = keyupHandler;
+						column.events[`keyup #${column.data}_footer_${view.cid}`] = keyupHandler;
 					});
 				}
 			}

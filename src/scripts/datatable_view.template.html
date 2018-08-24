@@ -4,26 +4,34 @@
 		<table width="100%" class="table table-bordered">
 			<thead>
 				<tr>
-					<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
+				<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
 					<th>
 						<%- _.result(configuration.columns[index], 'title') || _.result(configuration.columns[index], 'data', '') %>
-						<div data-index="<%- index %>">
-							<%= _.result($.extend({view: view }, configuration.columns[index]), 'footerHtml', '') %>
-						</div>
 					</th>
-					<% } %>
+				<% } %>
 				</tr>
+				<% if (configuration.showHeaderHtml !== false) { %>
+				<tr>
+				<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
+					<th class="<%- _.result(configuration.columns[index], 'className', '') %>">
+						<%= _.result($.extend({view: view }, configuration.columns[index]), 'headerHtml', '') %>
+					</th>
+				<% } %>
+				</tr>
+				<% } %>
 			</thead>
 			<tbody></tbody>
+			<% if (configuration.showFooterHtml !== false) { %>
 			<tfoot>
 				<tr>
-					<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
-					<td data-index="<%- index %>">
+				<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
+					<td class="<%- _.result(configuration.columns[index], 'className', '') %>">
 						<%= _.result($.extend({view: view }, configuration.columns[index]), 'footerHtml', '') %>
 					</td>
-					<% } %>
+				<% } %>
 				</tr>
 			</tfoot>
+			<% } %>
 		</table>
 	</div>
 </div>

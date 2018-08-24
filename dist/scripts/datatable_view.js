@@ -17,7 +17,7 @@ var DataTableView = Backbone.View.extend({
 
 	dataTable: null,
 
-	template: _.template('<!-- datatable_view.template.html -->\n<div class="row">\n\t<div class="col-xs-12">\n\t\t<table width="100%" class="table table-bordered">\n\t\t\t<thead>\n\t\t\t\t<tr>\n\t\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th>\n\t\t\t\t\t\t<%- _.result(configuration.columns[index], \'title\') || _.result(configuration.columns[index], \'data\', \'\') %>\n\t\t\t\t\t\t<div data-index="<%- index %>">\n\t\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'footerHtml\', \'\') %>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</th>\n\t\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t</thead>\n\t\t\t<tbody></tbody>\n\t\t\t<tfoot>\n\t\t\t\t<tr>\n\t\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<td data-index="<%- index %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'footerHtml\', \'\') %>\n\t\t\t\t\t</td>\n\t\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t</tfoot>\n\t\t</table>\n\t</div>\n</div>\n'),
+	template: _.template('<!-- datatable_view.template.html -->\n<div class="row">\n\t<div class="col-xs-12">\n\t\t<table width="100%" class="table table-bordered">\n\t\t\t<thead>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th>\n\t\t\t\t\t\t<%- _.result(configuration.columns[index], \'title\') || _.result(configuration.columns[index], \'data\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% if (configuration.showHeaderHtml !== false) { %>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'headerHtml\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% } %>\n\t\t\t</thead>\n\t\t\t<tbody></tbody>\n\t\t\t<% if (configuration.showFooterHtml !== false) { %>\n\t\t\t<tfoot>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<td class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'footerHtml\', \'\') %>\n\t\t\t\t\t</td>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t</tfoot>\n\t\t\t<% } %>\n\t\t</table>\n\t</div>\n</div>\n'),
 
 	// METHOD DEFINITION
 
@@ -65,11 +65,12 @@ var DataTableView = Backbone.View.extend({
 		}).then(function () {
 
 			// RENDER DATATABLE
-			var dt_configuration = $.extend({}, configuration);
+			var dt_configuration = $.extend({
+				orderCellsTop: true
+			}, configuration);
 			if (configuration['serverSide'] === true) {
 				$.extend(dt_configuration, {
 					ajax: function ajax(data, callback) {
-
 						// TODO.
 						// const defaultFetchParameters = _.result(this.collection, 'fetchParameters');
 
@@ -439,38 +440,76 @@ var DataTableView = Backbone.View.extend({
 	//////////////////////////////////////////////////////////////////////////////
 
 	preRenders: {
-		'searchFooterFactory': function searchFooterFactory(columnFilter) {
+		'filterHtmlFactory': function filterHtmlFactory(columnFilter) {
 			if (typeof columnFilter === 'string') {
 				columnFilter = DataTableView.columnFilters[columnFilter];
 			}
 			return function (column, configuration, view) {
 				return Promise.resolve().then(function () {
-					//     if (column.choices && typeof column.choices === 'string') {
-					//       const url = column.choices;
-					//       column.choices = [];
-					//       return fetchConfigurations(url, column.choices);
-					//     }
-					//   }).then(() => {
+					if (column.choices && typeof column.choices === 'string') {
+						return new Promise(function (resolve) {
+							var url = column.choices;
+							column.choices = [];
+							$.getJSON(url).then(function (data) {
+								if (Array.isArray(data)) {
+									column.choices = data;
+								}
+								resolve();
+							}, function () {
+								resolve();
+							});
+						});
+					}
+				}).then(function () {
 					if (column.choices) {
-						column.footerHtml = '\n            <label class="sr-only" for="' + column.data + '_' + view.cid + '">Search ' + (column.title || column.data) + '</label>\n            <select class="form-control" id="' + column.data + '_' + view.cid + '">\n              ' + (column.choices[0].value != null ? column.choices[0].value != '' ? '<option value=""></option>' : '' : column.choices[0].text != '' ? '<option value=""></option>' : '') + '\n              ' + column.choices.map(function (choice) {
-							return '<option value="' + (choice.value !== null ? choice.value : choice.text) + '">' + choice.text + '</option>';
-						}).join('') + '\n            </select>\n          ';
+						if (column.choices.length === 0 || column.choices[0].value !== '') {
+							column.choices.unshift({ text: '' });
+						}
+						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
+							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>';
+						}).join('') + '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
+						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
+							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>';
+						}).join('') + '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
 					} else {
-						column.footerHtml = '\n            <label class="sr-only" for="' + column.data + '_' + view.cid + '">Search ' + (column.title || column.data) + '</label>\n            <input type="text" class="form-control" id="' + column.data + '_' + view.cid + '">\n          ';
+						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t';
+						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t';
 					}
 
 					if (!column.events) {
 						column.events = {};
 					}
 
-					column.events['change #' + column.data + '_' + view.cid] = function (event) {
-						var $input = $(event.currentTarget);
-						columnFilter(configuration.serverSide, $input.val(), view.dataTable.column(+$input.closest('td').data('index')));
+					var synceValue = function synceValue(value) {
+						var $headerInput = $('#' + column.data + '_header_' + view.cid);
+						if ($headerInput.val() !== value) {
+							$headerInput.val(value);
+						}
+						var $footerInput = $('#' + column.data + '_footer_' + view.cid);
+						if ($footerInput.val() !== value) {
+							$footerInput.val(value);
+						}
 					};
-					column.events['keyup #' + column.data + '_' + view.cid] = function (event) {
-						var $input = $(event.currentTarget);
-						columnFilter(configuration.serverSide, $input.val(), view.dataTable.column(+$input.closest('td').data('index')));
+
+					var changeHandler = function changeHandler(event) {
+						var $input = $(event.target);
+						var value = $input.val();
+						var index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						synceValue(value);
+						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
 					};
+					column.events['change #' + column.data + '_header_' + view.cid] = changeHandler;
+					column.events['change #' + column.data + '_footer_' + view.cid] = changeHandler;
+
+					var keyupHandler = function keyupHandler(event) {
+						var $input = $(event.target);
+						var value = $input.val();
+						var index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						synceValue(value);
+						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
+					};
+					column.events['keyup #' + column.data + '_header_' + view.cid] = keyupHandler;
+					column.events['keyup #' + column.data + '_footer_' + view.cid] = keyupHandler;
 				});
 			};
 		}

@@ -49,20 +49,24 @@
 			table.dataTable {
 				margin: 0 !important;
 
-				td, th {
-					min-width: 200px;
-
-					&.col-view {
-						min-width: 60px;
-						width: 60px;
+				thead,
+				tfoot {
+					tr {
+						td,
+						th {
+							input,
+							select {
+								font-weight: normal;
+								width: 100%;
+							}
+						}
 					}
 				}
 
-				tfoot {
-					td {
-						input,
-						select {
-							width: 100%;
+				thead {
+					tr:first-child {
+						th {
+							border-bottom: 0;
 						}
 					}
 				}
@@ -71,6 +75,15 @@
 
 		div.dt-buttons {
 			display: none;
+		}
+	}
+
+	td, th {
+		min-width: 200px;
+
+		&.col-view {
+			min-width: 60px;
+			width: 60px;
 		}
 	}
 }

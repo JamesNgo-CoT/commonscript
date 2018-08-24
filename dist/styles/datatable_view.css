@@ -39,20 +39,37 @@
     #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable,
     .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable {
       margin: 0 !important; }
-      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable td, #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable th,
-      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable td,
-      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable th {
-        min-width: 200px; }
-        #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable td.col-view, #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable th.col-view,
-        .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable td.col-view,
-        .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable th.col-view {
-          min-width: 60px;
-          width: 60px; }
-      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot td input,
-      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot td select,
-      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot td input,
-      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot td select {
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr td input,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr td select,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr th input,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr th select,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr td input,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr td select,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr th input,
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr th select,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr td input,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr td select,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr th input,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr th select,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr td input,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr td select,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr th input,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable tfoot tr th select {
+        font-weight: normal;
         width: 100%; }
+      #maincontent .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr:first-child th,
+      .DataTableView div.dataTables_wrapper div.table-responsive table.dataTable thead tr:first-child th {
+        border-bottom: 0; }
   #maincontent .DataTableView div.dataTables_wrapper div.dt-buttons,
   .DataTableView div.dataTables_wrapper div.dt-buttons {
     display: none; }
+
+#maincontent .DataTableView td, #maincontent .DataTableView th,
+.DataTableView td,
+.DataTableView th {
+  min-width: 200px; }
+  #maincontent .DataTableView td.col-view, #maincontent .DataTableView th.col-view,
+  .DataTableView td.col-view,
+  .DataTableView th.col-view {
+    min-width: 60px;
+    width: 60px; }
