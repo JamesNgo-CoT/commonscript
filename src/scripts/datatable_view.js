@@ -117,7 +117,7 @@ const DataTableView = Backbone.View.extend({
 				});
 			} else {
 				$.extend(dt_configuration, {
-					data: this.collection.toJSON({ transform: false })
+					data: this.collection.toJSON()
 				});
 			}
 

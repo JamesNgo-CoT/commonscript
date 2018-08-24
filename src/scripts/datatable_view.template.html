@@ -8,6 +8,7 @@
 					<th>
 						<%- _.result(configuration.columns[index], 'title') || _.result(configuration.columns[index], 'data', '') %>
 						<div data-index="<%- index %>">
+							<%= _.result($.extend({view: view }, configuration.columns[index]), 'footerHtml', '') %>
 						</div>
 					</th>
 					<% } %>
