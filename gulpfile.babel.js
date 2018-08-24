@@ -93,7 +93,7 @@ export function buildJs() {
 
 export const build = gulp.series(clean, gulp.parallel(buildJs, buildCss, buildHtml));
 
-export function watch() {
+function _serve() {
 	const servePath = '.';
 	gulp.src(servePath)
 		.pipe(webServer({
@@ -102,7 +102,9 @@ export function watch() {
 			open: true,
 			port: 8080
 		}));
+}
 
+function _watch() {
 	const htmlTemplate = './src/**/*.template.html';
 	gulp.watch((Array.isArray(buildHtmlSrc) ? buildHtmlSrc : [buildHtmlSrc]).concat(
 		Array.isArray(htmlTemplate) ? htmlTemplate : [htmlTemplate]
@@ -126,6 +128,7 @@ export function watch() {
 	), buildJs);
 }
 
-export const serve = gulp.series(build, watch);
+export const serve = gulp.series(build, _serve, _watch);
+export const watch = gulp.series(build, _watch);
 
 export default build;
