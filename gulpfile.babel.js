@@ -102,6 +102,8 @@ function _serve() {
 			open: true,
 			port: 8080
 		}));
+
+	_watch();
 }
 
 function _watch() {
@@ -128,7 +130,7 @@ function _watch() {
 	), buildJs);
 }
 
-export const serve = gulp.series(build, _serve, _watch);
+export const serve = gulp.series(build, _serve);
 export const watch = gulp.series(build, _watch);
 
 export default build;
