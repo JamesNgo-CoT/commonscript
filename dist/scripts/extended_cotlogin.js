@@ -116,16 +116,16 @@ var ExtendedCotSession = function (_CotSession) {
 	return ExtendedCotSession;
 }(CotSession);
 
-var AbstractExtendedCotLogin = function AbstractExtendedCotLogin() {
-	_classCallCheck(this, AbstractExtendedCotLogin);
+var PrototypeCopyCotLogin = function PrototypeCopyCotLogin() {
+	_classCallCheck(this, PrototypeCopyCotLogin);
 };
 
-AbstractExtendedCotLogin.prototype = cot_login.prototype;
+PrototypeCopyCotLogin.prototype = cot_login.prototype;
 
 /* exported ExtendedCotLogin */
 
-var ExtendedCotLogin = function (_AbstractExtendedCotL) {
-	_inherits(ExtendedCotLogin, _AbstractExtendedCotL);
+var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
+	_inherits(ExtendedCotLogin, _PrototypeCopyCotLogi);
 
 	// CONSTRUCTOR DEFINITION
 
@@ -249,4 +249,4 @@ var ExtendedCotLogin = function (_AbstractExtendedCotL) {
 	}]);
 
 	return ExtendedCotLogin;
-}(AbstractExtendedCotLogin);
+}(PrototypeCopyCotLogin);

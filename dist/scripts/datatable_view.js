@@ -333,7 +333,8 @@ var DataTableView = Backbone.View.extend({
 					} else if (value === '$NOTEMPTY') {
 						search = dtColumn.dataSrc() + ' ne null';
 					} else {
-						search = 'tolower(' + dtColumn.dataSrc() + ') eq \'' + value.toLowerCase() + '\'';
+						// search = `tolower(${dtColumn.dataSrc()}) eq '${value.toLowerCase().replace('\'', '\\\'')}'`;
+						search = dtColumn.dataSrc() + ' eq \'' + value.replace('\'', '\'\'') + '\'';
 					}
 				} else {
 					search = value;
@@ -359,7 +360,7 @@ var DataTableView = Backbone.View.extend({
 						var words = value.toLowerCase().split(' ');
 						var searches = [];
 						for (var i = 0, l = words.length; i < l; i++) {
-							searches.push('contains(tolower(' + dtColumn.dataSrc() + '),\'' + words[i] + '\')');
+							searches.push('contains(tolower(' + dtColumn.dataSrc() + '),\'' + words[i].replace('\'', '\'\'') + '\')');
 						}
 						search = searches.join(' and ');
 					}

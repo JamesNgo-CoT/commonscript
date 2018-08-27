@@ -85,11 +85,11 @@ class ExtendedCotSession extends CotSession {
 	}
 }
 
-class AbstractExtendedCotLogin { }
-AbstractExtendedCotLogin.prototype = cot_login.prototype;
+class PrototypeCopyCotLogin { }
+PrototypeCopyCotLogin.prototype = cot_login.prototype;
 
 /* exported ExtendedCotLogin */
-class ExtendedCotLogin extends AbstractExtendedCotLogin {
+class ExtendedCotLogin extends PrototypeCopyCotLogin {
 
 	// CONSTRUCTOR DEFINITION
 
