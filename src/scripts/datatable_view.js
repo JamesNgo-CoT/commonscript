@@ -17,7 +17,7 @@ const DataTableView = Backbone.View.extend({
 
 	// METHOD DEFINITION
 
-	resetFilters: function() {
+	resetFilters: function () {
 		$('tfoot input[type="text"], thead input[type="text"]', this.$el).each((index, element) => {
 			$(element).val($(element).attr('value') || '').change();
 		});
@@ -194,394 +194,401 @@ const DataTableView = Backbone.View.extend({
 	}
 }, {
 
-		//////////////////////////////////////////////////////////////////////////////
-		// BUTTONS CONFIGURATION
-		//////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////
+	// BUTTONS CONFIGURATION
+	//////////////////////////////////////////////////////////////////////////////
 
-		buttonsConfiguration: {
+	buttonsConfiguration: function buttonsConfiguration() {
+		return {
 			buttons: [{
 				extend: 'copyHtml5',
-				exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
 			}, {
 				extend: 'csvHtml5',
-				exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
 			}, {
 				extend: 'excelHtml5',
-				exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
 			}, {
 				extend: 'pdfHtml5',
-				exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
 			}, {
 				extend: 'print',
-				exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
 			}],
 
 			dom: `<'row'<'col-sm-6'l><'col-sm-6'f>><'row'<'col-sm-12'<'table-responsive'tr>>><'row'<'col-sm-5'i><'col-sm-7'p>>B`
+		}
+	},
+
+	//////////////////////////////////////////////////////////////////////////////
+	// COLUMN FILTERS
+	//////////////////////////////////////////////////////////////////////////////
+
+	columnFilters: {
+		'booleanEquals': (serverSide, value, dtColumn) => {
+			let search = '';
+
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
+						search = `${dtColumn.dataSrc()} eq ${value.toLowerCase()}`;
+					}
+				} else {
+					search = value;
+				}
+			}
+
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
+			}
 		},
 
-		//////////////////////////////////////////////////////////////////////////////
-		// COLUMN FILTERS
-		//////////////////////////////////////////////////////////////////////////////
+		'numberEquals': (serverSide, value, dtColumn) => {
+			let search = '';
 
-		columnFilters: {
-			'booleanEquals': (serverSide, value, dtColumn) => {
-				let search = '';
-
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
-							search = `${dtColumn.dataSrc()} eq ${value.toLowerCase()}`;
-						}
-					} else {
-						search = value;
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else if (!isNaN(value)) {
+						search = `${dtColumn.dataSrc()} eq ${value.toLowerCase()}`;
 					}
+				} else {
+					search = value;
 				}
+			}
 
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
-			},
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
+			}
+		},
 
-			'numberEquals': (serverSide, value, dtColumn) => {
-				let search = '';
+		'numberBetween': (serverSide, value, dtColumn) => {
+			let search = '';
 
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else if (!isNaN(value)) {
-							search = `${dtColumn.dataSrc()} eq ${value.toLowerCase()}`;
-						}
-					} else {
-						search = value;
-					}
-				}
-
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
-			},
-
-			'numberBetween': (serverSide, value, dtColumn) => {
-				let search = '';
-
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else if (value.toLowerCase().indexOf('to') !== -1) {
-							const nums = value.toLowerCase().split('to');
-							if (!isNaN(nums[0]) || !isNaN(nums[0])) {
-								const searches = [];
-								if (!isNaN(nums[0])) {
-									searches[0] = `${dtColumn.dataSrc()} ge ${nums[0]}`;
-								} else {
-									searches[0] = null
-								}
-								if (!isNaN(nums[1])) {
-									searches[1] = `${dtColumn.dataSrc()} le ${nums[1]}`;
-								} else {
-									searches[1] = null
-								}
-								search = searches.filter((val) => val).join(' and ');
-							}
-						}
-					} else {
-						search = value;
-					}
-				}
-
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
-			},
-
-			'stringEquals': (serverSide, value, dtColumn) => {
-				let search = '';
-
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else {
-							search = `tolower(${dtColumn.dataSrc()}) eq '${value.toLowerCase()}'`;
-						}
-					} else {
-						search = value;
-					}
-				}
-
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
-			},
-
-			'stringContains': (serverSide, value, dtColumn) => {
-				let search = '';
-
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else {
-							const words = value.toLowerCase().split(' ');
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else if (value.toLowerCase().indexOf('to') !== -1) {
+						const nums = value.toLowerCase().split('to');
+						if (!isNaN(nums[0]) || !isNaN(nums[0])) {
 							const searches = [];
-							for (let i = 0, l = words.length; i < l; i++) {
-								searches.push(`contains(tolower(${dtColumn.dataSrc()}),'${words[i]}')`);
+							if (!isNaN(nums[0])) {
+								searches[0] = `${dtColumn.dataSrc()} ge ${nums[0]}`;
+							} else {
+								searches[0] = null
 							}
-							search = searches.join(' and ');
-						}
-					} else {
-						search = value;
-					}
-				}
-
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
-			},
-			// },
-
-			'dateEquals': (serverSide, value, dtColumn) => {
-				let search = '';
-
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else if (moment(value, 'l').isValid()) {
-							const start = moment(value, 'l').set({
-								hour: 0,
-								minute: 0,
-								second: 0,
-								millisecond: 0
-							}).format();
-							const end = moment(start).add({
-								hours: 24
-							}).format();
-							search = `${dtColumn.dataSrc()} ge ${start} and ${dtColumn.dataSrc()} le ${end}`;
-						}
-					} else {
-						search = value;
-					}
-				}
-
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
-			},
-
-			'dateBetween': (serverSide, value, dtColumn) => {
-				let search = '';
-
-				if (value) {
-					if (serverSide) {
-						if (value === '$EMPTY') {
-							search = `${dtColumn.dataSrc()} eq null`;
-						} else if (value === '$NOTEMPTY') {
-							search = `${dtColumn.dataSrc()} ne null`;
-						} else if (value.toLowerCase().indexOf('to') !== -1) {
-							const dates = value.toLowerCase().split('to');
-							if (moment(dates[0]).isValid() || moment(dates[1]).isValid()) {
-								const searches = [];
-								if (moment(dates[0]).isValid()) {
-									const start = moment(dates[0]).set({
-										hour: 0,
-										minute: 0,
-										second: 0,
-										millisecond: 0
-									}).format();
-									searches[0] = `${dtColumn.dataSrc()} ge ${start}`;
-								} else {
-									searches[0] = null
-								}
-								if (moment(dates[1]).isValid()) {
-									const end = moment(dates[1]).set({
-										hour: 0,
-										minute: 0,
-										second: 0,
-										millisecond: 0
-									}).add({
-										hours: 24
-									}).format();
-									searches[1] = `${dtColumn.dataSrc()} le ${end}`;
-								} else {
-									searches[1] = null
-								}
-								search = searches.filter((val) => val).join(' and ');
+							if (!isNaN(nums[1])) {
+								searches[1] = `${dtColumn.dataSrc()} le ${nums[1]}`;
+							} else {
+								searches[1] = null
 							}
+							search = searches.filter((val) => val).join(' and ');
 						}
-					} else {
-						search = value;
 					}
+				} else {
+					search = value;
 				}
+			}
 
-				if (search !== dtColumn.search()) {
-					dtColumn.search(search);
-					dtColumn.draw();
-				}
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
 			}
 		},
 
-		//////////////////////////////////////////////////////////////////////////////
-		// COLUMNS
-		//////////////////////////////////////////////////////////////////////////////
+		'stringEquals': (serverSide, value, dtColumn) => {
+			let search = '';
 
-		columns: {
-			'id': {
-				data: 'id',
-				title: 'ID'
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else {
+						search = `tolower(${dtColumn.dataSrc()}) eq '${value.toLowerCase()}'`;
+					}
+				} else {
+					search = value;
+				}
+			}
+
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
 			}
 		},
 
-		//////////////////////////////////////////////////////////////////////////////
-		// PRE RENDERS
-		//////////////////////////////////////////////////////////////////////////////
+		'stringContains': (serverSide, value, dtColumn) => {
+			let search = '';
 
-		preRenders: {
-			'filterHtmlFactory': (columnFilter, defaultValue) => {
-				if (typeof columnFilter === 'string') {
-					columnFilter = DataTableView.columnFilters[columnFilter];
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else {
+						const words = value.toLowerCase().split(' ');
+						const searches = [];
+						for (let i = 0, l = words.length; i < l; i++) {
+							searches.push(`contains(tolower(${dtColumn.dataSrc()}),'${words[i]}')`);
+						}
+						search = searches.join(' and ');
+					}
+				} else {
+					search = value;
 				}
-				return (column, configuration, view) => {
-					return Promise.resolve().then(() => {
-						if (column.choices && typeof column.choices === 'string') {
-							return new Promise((resolve) => {
-								const url = column.choices;
-								column.choices = [];
-								$.getJSON(url).then((data) => {
-									if (Array.isArray(data)) {
-										column.choices = data;
-									}
-									resolve();
-								}, () => {
-									resolve();
-								});
-							});
-						}
-					}).then(() => {
-						if (column.choices) {
-							if (column.choices.length === 0 || (column.choices[0].value != null && column.choices[0].value !== '') || (column.choices[0].value == null && column.choices[0].text !== '')) {
-								column.choices.unshift({ text: '' });
-							}
-							column.headerHtml = `
-								<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
-								<select class="form-control" id="${column.data}_header_${view.cid}">
-									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + ((choice.value != null && choice.value === defaultValue) || (choice.value == null && choice.text === defaultValue) ? ' selected' : '') + '>' + choice.text + '</option>').join('')}
-								</select>
-							`;
-							column.footerHtml = `
-								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
-								<select class="form-control" id="${column.data}_footer_${view.cid}">
-									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + ((choice.value != null && choice.value === defaultValue) || (choice.value == null && choice.text === defaultValue) ? ' selected' : '') + '>' + choice.text + '</option>').join('')}
-								</select>
-							`;
-						} else {
-							column.headerHtml = `
-								<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
-								<input type="text" class="form-control" id="${column.data}_header_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
-							`;
-							column.footerHtml = `
-								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
-								<input type="text" class="form-control" id="${column.data}_footer_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
-							`;
-						}
+			}
 
-						if (columnFilter === DataTableView.columnFilters['dateBetween']) {
-							column.postRender = ((postRender = (() => {})) => {
-								return (column, configuration, view) => {
-									postRender.call(this, column, configuration, view);
-									$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`, view.$el).each((index, element) => {
-										const $element = $(element);
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
+			}
+		},
+		// },
 
-										$element.daterangepicker({
-											autoUpdateInput: false,
-											locale: {
-												cancelLabel: 'Clear'
-											}
-										});
+		'dateEquals': (serverSide, value, dtColumn) => {
+			let search = '';
 
-										$element.on('apply.daterangepicker', function(ev, picker) {
-											$(this).val(picker.startDate.format('YYYY/MM/DD/') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
-										});
-
-										$element.on('cancel.daterangepicker', function() {
-											$(this).val('');
-										});
-									});
-
-								}
-							})(column.postRender);
-						} else if (columnFilter === DataTableView.columnFilters['dateEquals']) {
-							// TODO
-							// column.postRender = ((postRender = (() => {})) => {
-							// 	return (column, configuration, view) => {
-							// 		postRender.call(this, column, configuration, view);
-							// 		$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`, view.$el).each((index, element) => {
-							// 			$(element).datetimepicker({
-							// 				format: 'YYYY/MM/DD'
-							// 			});
-							// 		});
-							// 	}
-							// })(column.postRender);
-						}
-
-						if (!column.events) {
-							column.events = {};
-						}
-
-						const synceValue = (value) => {
-							const $headerInput = $(`#${column.data}_header_${view.cid}`);
-							if ($headerInput.val() !== value ) {
-								$headerInput.val(value);
-							}
-							const $footerInput = $(`#${column.data}_footer_${view.cid}`);
-							if ($footerInput.val() !== value ) {
-								$footerInput.val(value);
-							}
-						};
-
-						const changeHandler = (event) => {
-							const $input = $(event.target);
-							const value = $input.val();
-							const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
-							synceValue(value);
-							columnFilter(configuration.serverSide, value, view.dataTable.column(index));
-						};
-						column.events[`change #${column.data}_header_${view.cid}`] = changeHandler;
-						column.events[`change #${column.data}_footer_${view.cid}`] = changeHandler;
-
-						const keyupHandler = (event) => {
-							const $input = $(event.target);
-							const value = $input.val();
-							const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
-							synceValue(value);
-							columnFilter(configuration.serverSide, value, view.dataTable.column(index));
-						};
-						column.events[`keyup #${column.data}_header_${view.cid}`] = keyupHandler;
-						column.events[`keyup #${column.data}_footer_${view.cid}`] = keyupHandler;
-					});
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else if (moment(value, 'l').isValid()) {
+						const start = moment(value, 'l').set({
+							hour: 0,
+							minute: 0,
+							second: 0,
+							millisecond: 0
+						}).format();
+						const end = moment(start).add({
+							hours: 24
+						}).format();
+						search = `${dtColumn.dataSrc()} ge ${start} and ${dtColumn.dataSrc()} le ${end}`;
+					}
+				} else {
+					search = value;
 				}
+			}
+
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
+			}
+		},
+
+		'dateBetween': (serverSide, value, dtColumn) => {
+			let search = '';
+
+			if (value) {
+				if (serverSide) {
+					if (value === '$EMPTY') {
+						search = `${dtColumn.dataSrc()} eq null`;
+					} else if (value === '$NOTEMPTY') {
+						search = `${dtColumn.dataSrc()} ne null`;
+					} else if (value.toLowerCase().indexOf('to') !== -1) {
+						const dates = value.toLowerCase().split('to');
+						if (moment(dates[0]).isValid() || moment(dates[1]).isValid()) {
+							const searches = [];
+							if (moment(dates[0]).isValid()) {
+								const start = moment(dates[0]).set({
+									hour: 0,
+									minute: 0,
+									second: 0,
+									millisecond: 0
+								}).format();
+								searches[0] = `${dtColumn.dataSrc()} ge ${start}`;
+							} else {
+								searches[0] = null
+							}
+							if (moment(dates[1]).isValid()) {
+								const end = moment(dates[1]).set({
+									hour: 0,
+									minute: 0,
+									second: 0,
+									millisecond: 0
+								}).add({
+									hours: 24
+								}).format();
+								searches[1] = `${dtColumn.dataSrc()} le ${end}`;
+							} else {
+								searches[1] = null
+							}
+							search = searches.filter((val) => val).join(' and ');
+						}
+					}
+				} else {
+					search = value;
+				}
+			}
+
+			if (search !== dtColumn.search()) {
+				dtColumn.search(search);
+				dtColumn.draw();
 			}
 		}
-	});
+	},
+
+	//////////////////////////////////////////////////////////////////////////////
+	// COLUMNS
+	//////////////////////////////////////////////////////////////////////////////
+
+	columns: {
+		'id': {
+			data: 'id',
+			title: 'ID'
+		}
+	},
+
+	//////////////////////////////////////////////////////////////////////////////
+	// PRE RENDERS
+	//////////////////////////////////////////////////////////////////////////////
+
+	preRenders: {
+		'filterHtmlFactory': (columnFilter, defaultValue) => {
+			if (typeof columnFilter === 'string') {
+				columnFilter = DataTableView.columnFilters[columnFilter];
+			}
+			return (column, configuration, view) => {
+				return Promise.resolve().then(() => {
+					if (column.choices && typeof column.choices === 'string') {
+						return new Promise((resolve) => {
+							const url = column.choices;
+							column.choices = [];
+							$.getJSON(url).then((data) => {
+								if (Array.isArray(data)) {
+									column.choices = data;
+								}
+								resolve();
+							}, () => {
+								resolve();
+							});
+						});
+					}
+				}).then(() => {
+					if (column.choices) {
+						if (column.choices.length === 0 || (column.choices[0].value != null && column.choices[0].value !== '') || (column.choices[0].value == null && column.choices[0].text !== '')) {
+							column.choices.unshift({ text: '' });
+						}
+						column.headerHtml = `
+							<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
+							<select class="form-control" id="${column.data}_header_${view.cid}">
+								${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + ((choice.value != null && choice.value === defaultValue) || (choice.value == null && choice.text === defaultValue) ? ' selected' : '') + '>' + choice.text + '</option>').join('')}
+							</select>
+						`;
+						column.footerHtml = `
+							<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
+							<select class="form-control" id="${column.data}_footer_${view.cid}">
+								${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + ((choice.value != null && choice.value === defaultValue) || (choice.value == null && choice.text === defaultValue) ? ' selected' : '') + '>' + choice.text + '</option>').join('')}
+							</select>
+						`;
+					} else {
+						column.headerHtml = `
+							<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
+							<input type="text" class="form-control" id="${column.data}_header_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
+						`;
+						column.footerHtml = `
+							<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
+							<input type="text" class="form-control" id="${column.data}_footer_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
+						`;
+					}
+
+					if (columnFilter === DataTableView.columnFilters['dateBetween']) {
+						column.postRender = ((postRender = (() => { })) => {
+							return (column, configuration, view) => {
+								postRender.call(this, column, configuration, view);
+								$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`, view.$el).each((index, element) => {
+									const $element = $(element);
+
+									$element.daterangepicker({
+										autoUpdateInput: false,
+										locale: {
+											cancelLabel: 'Clear'
+										}
+									});
+
+									$element.on('apply.daterangepicker', function (ev, picker) {
+										$(this).val(picker.startDate.format('YYYY/MM/DD/') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
+									});
+
+									$element.on('cancel.daterangepicker', function () {
+										$(this).val('');
+									});
+								});
+
+							}
+						})(column.postRender);
+					} else if (columnFilter === DataTableView.columnFilters['dateEquals']) {
+						// TODO
+						// column.postRender = ((postRender = (() => {})) => {
+						// 	return (column, configuration, view) => {
+						// 		postRender.call(this, column, configuration, view);
+						// 		$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`, view.$el).each((index, element) => {
+						// 			$(element).datetimepicker({
+						// 				format: 'YYYY/MM/DD'
+						// 			});
+						// 		});
+						// 	}
+						// })(column.postRender);
+					}
+
+					if (!column.events) {
+						column.events = {};
+					}
+
+					const synceValue = (value) => {
+						const $headerInput = $(`#${column.data}_header_${view.cid}`);
+						if ($headerInput.val() !== value) {
+							$headerInput.val(value);
+						}
+						const $footerInput = $(`#${column.data}_footer_${view.cid}`);
+						if ($footerInput.val() !== value) {
+							$footerInput.val(value);
+						}
+					};
+
+					const changeHandler = (event) => {
+						const $input = $(event.target);
+						const value = $input.val();
+						const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						synceValue(value);
+						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
+					};
+					column.events[`change #${column.data}_header_${view.cid}`] = changeHandler;
+					column.events[`change #${column.data}_footer_${view.cid}`] = changeHandler;
+
+					const keyupHandler = (event) => {
+						const $input = $(event.target);
+						const value = $input.val();
+						const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						synceValue(value);
+						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
+					};
+					column.events[`keyup #${column.data}_header_${view.cid}`] = keyupHandler;
+					column.events[`keyup #${column.data}_footer_${view.cid}`] = keyupHandler;
+				});
+			}
+		}
+	}
+});

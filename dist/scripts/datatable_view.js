@@ -205,25 +205,32 @@ var DataTableView = Backbone.View.extend({
 	// BUTTONS CONFIGURATION
 	//////////////////////////////////////////////////////////////////////////////
 
-	buttonsConfiguration: {
-		buttons: [{
-			extend: 'copyHtml5',
-			exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
-		}, {
-			extend: 'csvHtml5',
-			exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
-		}, {
-			extend: 'excelHtml5',
-			exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
-		}, {
-			extend: 'pdfHtml5',
-			exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
-		}, {
-			extend: 'print',
-			exportOptions: { columns: ':visible:not(.excludeFromButtons)' }
-		}],
+	buttonsConfiguration: function buttonsConfiguration() {
+		return {
+			buttons: [{
+				extend: 'copyHtml5',
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
+			}, {
+				extend: 'csvHtml5',
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
+			}, {
+				extend: 'excelHtml5',
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
+			}, {
+				extend: 'pdfHtml5',
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
+			}, {
+				extend: 'print',
+				exportOptions: { columns: ':visible:not(.excludeFromButtons)' },
+				title: this.title
+			}],
 
-		dom: '<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>><\'row\'<\'col-sm-12\'<\'table-responsive\'tr>>><\'row\'<\'col-sm-5\'i><\'col-sm-7\'p>>B'
+			dom: '<\'row\'<\'col-sm-6\'l><\'col-sm-6\'f>><\'row\'<\'col-sm-12\'<\'table-responsive\'tr>>><\'row\'<\'col-sm-5\'i><\'col-sm-7\'p>>B'
+		};
 	},
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -495,15 +502,15 @@ var DataTableView = Backbone.View.extend({
 						if (column.choices.length === 0 || column.choices[0].value != null && column.choices[0].value !== '' || column.choices[0].value == null && column.choices[0].text !== '') {
 							column.choices.unshift({ text: '' });
 						}
-						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
+						column.headerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
 							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + (choice.value != null && choice.value === defaultValue || choice.value == null && choice.text === defaultValue ? ' selected' : '') + '>' + choice.text + '</option>';
-						}).join('') + '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
-						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
+						}).join('') + '\n\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t';
+						column.footerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
 							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + (choice.value != null && choice.value === defaultValue || choice.value == null && choice.text === defaultValue ? ' selected' : '') + '>' + choice.text + '</option>';
-						}).join('') + '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
+						}).join('') + '\n\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t';
 					} else {
-						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t\t';
-						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t\t';
+						column.headerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t';
+						column.footerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t';
 					}
 
 					if (columnFilter === DataTableView.columnFilters['dateBetween']) {
