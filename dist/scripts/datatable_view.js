@@ -178,6 +178,8 @@ var DataTableView = Backbone.View.extend({
 			_this.delegateEvents();
 
 			return Promise.all(postRenderPromises);
+		}).then(function () {
+			$('thead input, thead select, tfoot input, tfoot select', _this.$el).change();
 		}).catch(function (error) {
 			if (error) {
 				alert('An error occured. ' + error);
@@ -460,7 +462,7 @@ var DataTableView = Backbone.View.extend({
 	//////////////////////////////////////////////////////////////////////////////
 
 	preRenders: {
-		'filterHtmlFactory': function filterHtmlFactory(columnFilter) {
+		'filterHtmlFactory': function filterHtmlFactory(columnFilter, defaultValue) {
 			if (typeof columnFilter === 'string') {
 				columnFilter = DataTableView.columnFilters[columnFilter];
 			}
@@ -494,6 +496,26 @@ var DataTableView = Backbone.View.extend({
 					} else {
 						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t';
 						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t';
+					}
+
+					if (defaultValue) {
+						column.postRender = function () {
+							var postRender = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+
+							return function () {
+								var _this2 = this;
+
+								for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+									args[_key] = arguments[_key];
+								}
+
+								return Promise.resolve().then(function () {
+									return postRender.call.apply(postRender, [_this2].concat(args));
+								}).then(function () {
+									$('#' + column.data + '_header_' + view.cid + ', #' + column.data + '_footer_' + view.cid).val(defaultValue).change();
+								});
+							};
+						}(column.postRender);
 					}
 
 					if (!column.events) {

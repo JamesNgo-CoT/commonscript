@@ -171,6 +171,8 @@ const DataTableView = Backbone.View.extend({
 			this.delegateEvents();
 
 			return Promise.all(postRenderPromises);
+		}).then(() => {
+			$('thead input, thead select, tfoot input, tfoot select', this.$el).change();
 		}).catch((error) => {
 			if (error) {
 				alert(`An error occured. ${error}`);
@@ -449,7 +451,7 @@ const DataTableView = Backbone.View.extend({
 		//////////////////////////////////////////////////////////////////////////////
 
 		preRenders: {
-			'filterHtmlFactory': (columnFilter) => {
+			'filterHtmlFactory': (columnFilter, defaultValue) => {
 				if (typeof columnFilter === 'string') {
 					columnFilter = DataTableView.columnFilters[columnFilter];
 				}
@@ -496,6 +498,19 @@ const DataTableView = Backbone.View.extend({
 								<input type="text" class="form-control" id="${column.data}_footer_${view.cid}">
 							`;
 						}
+
+						if (defaultValue) {
+							column.postRender = ((postRender = (() => {})) => {
+								return function(...args) {
+									return Promise.resolve().then(() => {
+										return postRender.call(this, ...args);
+									}).then(() => {
+										$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`).val(defaultValue).change();
+									});
+								}
+							})(column.postRender);
+						}
+
 
 						if (!column.events) {
 							column.events = {};
