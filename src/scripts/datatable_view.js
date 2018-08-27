@@ -26,6 +26,7 @@ const DataTableView = Backbone.View.extend({
 			const value = $option.attr('value')
 			$(element).val(value != null ? value : $option.text()).change();
 		});
+		this.dataTable.search('').draw();
 	},
 
 	reload: function (callback, resetPaging = false) {
@@ -504,6 +505,45 @@ const DataTableView = Backbone.View.extend({
 								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
 								<input type="text" class="form-control" id="${column.data}_footer_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
 							`;
+						}
+
+						if (columnFilter === DataTableView.columnFilters['dateBetween']) {
+							column.postRender = ((postRender = (() => {})) => {
+								return (column, configuration, view) => {
+									postRender.call(this, column, configuration, view);
+									$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`, view.$el).each((index, element) => {
+										const $element = $(element);
+
+										$element.daterangepicker({
+											autoUpdateInput: false,
+											locale: {
+												cancelLabel: 'Clear'
+											}
+										});
+
+										$element.on('apply.daterangepicker', function(ev, picker) {
+											$(this).val(picker.startDate.format('YYYY/MM/DD/') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
+										});
+
+										$element.on('cancel.daterangepicker', function(ev, picker) {
+											$(this).val('');
+										});
+									});
+
+								}
+							})(column.postRender);
+						} else if (columnFilter === DataTableView.columnFilters['dateEquals']) {
+							// TODO
+							// column.postRender = ((postRender = (() => {})) => {
+							// 	return (column, configuration, view) => {
+							// 		postRender.call(this, column, configuration, view);
+							// 		$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`, view.$el).each((index, element) => {
+							// 			$(element).datetimepicker({
+							// 				format: 'YYYY/MM/DD'
+							// 			});
+							// 		});
+							// 	}
+							// })(column.postRender);
 						}
 
 						if (!column.events) {
