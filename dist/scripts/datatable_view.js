@@ -21,8 +21,15 @@ var DataTableView = Backbone.View.extend({
 
 	// METHOD DEFINITION
 
-	clearFilters: function clearFilters() {
-		$('thead input, thead select, tfoot input, tfoot select', this.$el).val('').change();
+	resetFilters: function resetFilters() {
+		$('tfoot input[type="text"], thead input[type="text"]', this.$el).each(function (index, element) {
+			$(element).val($(element).attr('value') || '').change();
+		});
+		$('tfoot select, thead select', this.$el).each(function (index, element) {
+			var $option = $(element).find('[selected]');
+			var value = $option.attr('value');
+			$(element).val(value != null ? value : $option.text()).change();
+		});
 	},
 
 	reload: function reload(callback) {
@@ -488,34 +495,14 @@ var DataTableView = Backbone.View.extend({
 							column.choices.unshift({ text: '' });
 						}
 						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
-							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>';
+							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + (choice.value != null && choice.value === defaultValue || choice.value == null && choice.text === defaultValue ? ' selected' : '') + '>' + choice.text + '</option>';
 						}).join('') + '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
 						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
-							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>';
+							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + (choice.value != null && choice.value === defaultValue || choice.value == null && choice.text === defaultValue ? ' selected' : '') + '>' + choice.text + '</option>';
 						}).join('') + '\n\t\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t\t';
 					} else {
-						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t';
-						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '">\n\t\t\t\t\t\t\t';
-					}
-
-					if (defaultValue) {
-						column.postRender = function () {
-							var postRender = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-
-							return function () {
-								var _this2 = this;
-
-								for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-									args[_key] = arguments[_key];
-								}
-
-								return Promise.resolve().then(function () {
-									return postRender.call.apply(postRender, [_this2].concat(args));
-								}).then(function () {
-									$('#' + column.data + '_header_' + view.cid + ', #' + column.data + '_footer_' + view.cid).val(defaultValue).change();
-								});
-							};
-						}(column.postRender);
+						column.headerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t\t';
+						column.footerHtml = '\n\t\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t\t';
 					}
 
 					if (!column.events) {

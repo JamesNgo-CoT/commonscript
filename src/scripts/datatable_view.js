@@ -17,8 +17,15 @@ const DataTableView = Backbone.View.extend({
 
 	// METHOD DEFINITION
 
-	clearFilters: function() {
-		$('thead input, thead select, tfoot input, tfoot select', this.$el).val('').change();
+	resetFilters: function() {
+		$('tfoot input[type="text"], thead input[type="text"]', this.$el).each((index, element) => {
+			$(element).val($(element).attr('value') || '').change();
+		});
+		$('tfoot select, thead select', this.$el).each((index, element) => {
+			const $option = $(element).find('[selected]');
+			const value = $option.attr('value')
+			$(element).val(value != null ? value : $option.text()).change();
+		});
 	},
 
 	reload: function (callback, resetPaging = false) {
@@ -479,38 +486,25 @@ const DataTableView = Backbone.View.extend({
 							column.headerHtml = `
 								<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
 								<select class="form-control" id="${column.data}_header_${view.cid}">
-									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>').join('')}
+									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + ((choice.value != null && choice.value === defaultValue) || (choice.value == null && choice.text === defaultValue) ? ' selected' : '') + '>' + choice.text + '</option>').join('')}
 								</select>
 							`;
 							column.footerHtml = `
 								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
 								<select class="form-control" id="${column.data}_footer_${view.cid}">
-									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '">' + choice.text + '</option>').join('')}
+									${column.choices.map((choice) => '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + ((choice.value != null && choice.value === defaultValue) || (choice.value == null && choice.text === defaultValue) ? ' selected' : '') + '>' + choice.text + '</option>').join('')}
 								</select>
 							`;
 						} else {
 							column.headerHtml = `
 								<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
-								<input type="text" class="form-control" id="${column.data}_header_${view.cid}">
+								<input type="text" class="form-control" id="${column.data}_header_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
 							`;
 							column.footerHtml = `
 								<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
-								<input type="text" class="form-control" id="${column.data}_footer_${view.cid}">
+								<input type="text" class="form-control" id="${column.data}_footer_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
 							`;
 						}
-
-						if (defaultValue) {
-							column.postRender = ((postRender = (() => {})) => {
-								return function(...args) {
-									return Promise.resolve().then(() => {
-										return postRender.call(this, ...args);
-									}).then(() => {
-										$(`#${column.data}_header_${view.cid}, #${column.data}_footer_${view.cid}`).val(defaultValue).change();
-									});
-								}
-							})(column.postRender);
-						}
-
 
 						if (!column.events) {
 							column.events = {};
