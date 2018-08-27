@@ -526,7 +526,7 @@ var DataTableView = Backbone.View.extend({
 										$(this).val(picker.startDate.format('YYYY/MM/DD/') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
 									});
 
-									$element.on('cancel.daterangepicker', function (ev, picker) {
+									$element.on('cancel.daterangepicker', function () {
 										$(this).val('');
 									});
 								});
