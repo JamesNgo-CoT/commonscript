@@ -5,6 +5,8 @@ var BaseRouter = Backbone.Router.extend({
 
 	// PROPERTY DEFINITION
 
+	homeFragment: null,
+
 	lastFragment: null,
 
 	routes: {
@@ -14,8 +16,10 @@ var BaseRouter = Backbone.Router.extend({
 	// METHOD DEFINITION
 
 	defautRoute: function defautRoute() {
-		if (this.lastFragment) {
+		if (this.lastFragment != null) {
 			this.navigate(this.lastFragment, { trigger: false });
+		} else if (this.homeRoute != null) {
+			this.navigate(this.homeFragment, { trigger: true });
 		}
 	},
 

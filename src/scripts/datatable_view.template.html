@@ -13,7 +13,7 @@
 				<% if (configuration.showHeaderHtml !== false) { %>
 				<tr>
 				<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
-					<th class="<%- _.result(configuration.columns[index], 'className', '') %>">
+					<th data-index="<%- index %>" class="<%- _.result(configuration.columns[index], 'className', '') %>">
 						<%= _.result($.extend({view: view }, configuration.columns[index]), 'headerHtml', '') %>
 					</th>
 				<% } %>
@@ -25,7 +25,7 @@
 			<tfoot>
 				<tr>
 				<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>
-					<td class="<%- _.result(configuration.columns[index], 'className', '') %>">
+					<td data-index="<%- index %>" class="<%- _.result(configuration.columns[index], 'className', '') %>">
 						<%= _.result($.extend({view: view }, configuration.columns[index]), 'footerHtml', '') %>
 					</td>
 				<% } %>

@@ -17,7 +17,7 @@ var DataTableView = Backbone.View.extend({
 
 	dataTable: null,
 
-	template: _.template('<!-- datatable_view.template.html -->\n<div class="row">\n\t<div class="col-xs-12">\n\t\t<table width="100%" class="table table-bordered">\n\t\t\t<thead>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th>\n\t\t\t\t\t\t<%- _.result(configuration.columns[index], \'title\') || _.result(configuration.columns[index], \'data\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% if (configuration.showHeaderHtml !== false) { %>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'headerHtml\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% } %>\n\t\t\t</thead>\n\t\t\t<tbody></tbody>\n\t\t\t<% if (configuration.showFooterHtml !== false) { %>\n\t\t\t<tfoot>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<td class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'footerHtml\', \'\') %>\n\t\t\t\t\t</td>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t</tfoot>\n\t\t\t<% } %>\n\t\t</table>\n\t</div>\n</div>\n'),
+	template: _.template('<!-- datatable_view.template.html -->\n<div class="row">\n\t<div class="col-xs-12">\n\t\t<table width="100%" class="table table-bordered">\n\t\t\t<thead>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th>\n\t\t\t\t\t\t<%- _.result(configuration.columns[index], \'title\') || _.result(configuration.columns[index], \'data\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% if (configuration.showHeaderHtml !== false) { %>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th data-index="<%- index %>" class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'headerHtml\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% } %>\n\t\t\t</thead>\n\t\t\t<tbody></tbody>\n\t\t\t<% if (configuration.showFooterHtml !== false) { %>\n\t\t\t<tfoot>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<td data-index="<%- index %>" class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'footerHtml\', \'\') %>\n\t\t\t\t\t</td>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t</tfoot>\n\t\t\t<% } %>\n\t\t</table>\n\t</div>\n</div>\n'),
 
 	// METHOD DEFINITION
 
@@ -360,7 +360,7 @@ var DataTableView = Backbone.View.extend({
 						var words = value.toLowerCase().split(' ');
 						var searches = [];
 						for (var i = 0, l = words.length; i < l; i++) {
-							searches.push('contains(tolower(' + dtColumn.dataSrc() + '),\'' + words[i].replace('\'', '\'\'') + '\')');
+							searches.push('contains(tolower(' + dtColumn.dataSrc() + '),\'' + words[i].toLowerCase().replace('\'', '\'\'') + '\')');
 						}
 						search = searches.join(' and ');
 					}
@@ -572,7 +572,8 @@ var DataTableView = Backbone.View.extend({
 					var changeHandler = function changeHandler(event) {
 						var $input = $(event.target);
 						var value = $input.val();
-						var index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						// const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						var index = +$input.closest('td, th').data('index');
 						synceValue(value);
 						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
 					};
@@ -582,7 +583,8 @@ var DataTableView = Backbone.View.extend({
 					var keyupHandler = function keyupHandler(event) {
 						var $input = $(event.target);
 						var value = $input.val();
-						var index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						// const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						var index = +$input.closest('td, th').data('index');
 						synceValue(value);
 						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
 					};

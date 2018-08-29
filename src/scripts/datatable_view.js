@@ -351,7 +351,7 @@ const DataTableView = Backbone.View.extend({
 						const words = value.toLowerCase().split(' ');
 						const searches = [];
 						for (let i = 0, l = words.length; i < l; i++) {
-							searches.push(`contains(tolower(${dtColumn.dataSrc()}),'${words[i].replace('\'', '\'\'')}')`);
+							searches.push(`contains(tolower(${dtColumn.dataSrc()}),'${words[i].toLowerCase().replace('\'', '\'\'')}')`);
 						}
 						search = searches.join(' and ');
 					}
@@ -572,7 +572,8 @@ const DataTableView = Backbone.View.extend({
 					const changeHandler = (event) => {
 						const $input = $(event.target);
 						const value = $input.val();
-						const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						// const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						const index = +$input.closest('td, th').data('index');
 						synceValue(value);
 						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
 					};
@@ -582,7 +583,8 @@ const DataTableView = Backbone.View.extend({
 					const keyupHandler = (event) => {
 						const $input = $(event.target);
 						const value = $input.val();
-						const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						// const index = $input.closest('tr').children('td, th').index($input.closest('td, th'));
+						const index = +$input.closest('td, th').data('index');
 						synceValue(value);
 						columnFilter(configuration.serverSide, value, view.dataTable.column(index));
 					};
