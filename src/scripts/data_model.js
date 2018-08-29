@@ -53,13 +53,13 @@ const DataModel = Backbone.Model.extend({
 
 						case 'datetime':
 							if (moment(response[key]).isValid()) {
-								response[key] = moment(response[key]).format('YYYY/MM/DD h:mm:ss a');
+								response[key] = moment(response[key]).format('YYYY-MM-DD h:mm:ss a');
 							}
 							break;
 
 						case 'date':
 							if (moment(response[key]).isValid()) {
-								response[key] = moment(response[key]).format('YYYY/MM/DD');
+								response[key] = moment(response[key]).format('YYYY-MM-DD');
 							}
 							break;
 					}
