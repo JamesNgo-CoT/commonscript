@@ -1,0 +1,1 @@
+{"version":3,"sources":["loginbutton_view.min.css"],"names":[],"mappings":"AAAA,iBACE,kBAAmB,AACnB,WAAY,AACZ,OAAS,CAAE","file":"loginbutton_view.min.css","sourcesContent":[".LoginButtonView {\n  position: absolute;\n  right: 60px;\n  top: 7px; }\n"]}
