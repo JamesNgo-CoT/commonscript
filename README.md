@@ -1,8 +1,3 @@
-<style>
-table { width: 100%; }
-table td:nth-child(1), table th:nth-child(1) { width: 33.333%; }
-</style>
-
 # COMMONSCRIPTS
 
 A library of commonly used scripts for web application development.
