@@ -223,11 +223,11 @@ var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
 			var _this7 = this;
 
 			this.modal = cot_app.showModal($.extend({
-				'body': '<!-- body.template.html -->\n<form>\n\t<div class="form-group">\n\t\t<label for="cot_login_username">Username</label>:\n\t\t<input class="form-control" id="cot_login_username">\n\t</div>\n\t<div class="form-group">\n\t\t<label for="cot_login_password">Password</label>:\n\t\t<input class="form-control" type="password" id="cot_login_password">\n\t</div>\n</form>\n',
+				'body': '\n<form>\n\t<div class="form-group">\n\t\t<label for="cot_login_username">Username</label>:\n\t\t<input class="form-control" id="cot_login_username">\n\t</div>\n\t<div class="form-group">\n\t\t<label for="cot_login_password">Password</label>:\n\t\t<input class="form-control" type="password" id="cot_login_password">\n\t</div>\n</form>\n',
 
 				'className': 'cot-login-modal',
 
-				'footerButtonsHtml': '<!-- footer.template.html -->\n<button class="btn btn-primary btn-cot-login" type="button">Login</button>\n<button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>\n',
+				'footerButtonsHtml': '\n<button class="btn btn-primary btn-cot-login" type="button">Login</button>\n<button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>\n',
 
 				'onShown': function onShown() {
 					_this7.modal.find('.btn-cot-login').click(function () {

@@ -13,9 +13,9 @@ var FormView = Backbone.View.extend({
 
 	rootPath: '/* @echo SRC_PATH *//',
 
-	template: _.template('<!-- form_view.template.html -->\n<div class="formWrapper"></div>\n'),
+	template: _.template('\n<div class="formWrapper"></div>\n'),
 
-	template_buttons: _.template('<!-- form_view.buttons.template.html -->\n<div class="hidden-print btns-bar row">\n\t<div class="col-xs-12">\n\t\t<button type="submit" class="btn btn-primary btn-lg btn-submit">Submit</button>\n\t</div>\n</div>\n'),
+	template_buttons: _.template('\n<div class="hidden-print btns-bar row">\n\t<div class="col-xs-12">\n\t\t<button type="submit" class="btn btn-primary btn-lg btn-submit">Submit</button>\n\t</div>\n</div>\n'),
 
 	// MARK: METHOD DEFINITION
 
