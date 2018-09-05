@@ -41,11 +41,13 @@ var DataTableView = Backbone.View.extend({
 		function getFooterFilters() {
 			var returnValue = [];
 			if (options.configuration.showFooterHtml !== false) {
+				returnValue.push('<tfoot>');
 				returnValue.push('<tr>');
 				for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
-					returnValue.push('\n\t\t\t\t\t\t<th data-index="' + index + '" class="' + _.result(options.configuration.columns[index], 'className', '') + '">\n\t\t\t\t\t\t\t' + _.result($.extend({ view: options.view }, options.configuration.columns[index]), 'footerHtml', '') + '\n\t\t\t\t\t\t</th>\n\t\t\t\t\t');
+					returnValue.push('\n\t\t\t\t\t\t<td data-index="' + index + '" class="' + _.result(options.configuration.columns[index], 'className', '') + '">\n\t\t\t\t\t\t\t' + _.result($.extend({ view: options.view }, options.configuration.columns[index]), 'footerHtml', '') + '\n\t\t\t\t\t\t</td>\n\t\t\t\t\t');
 				}
 				returnValue.push('</tr>');
+				returnValue.push('</tfoot>');
 			}
 			return returnValue.join('');
 		}

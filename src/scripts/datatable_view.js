@@ -45,15 +45,17 @@ const DataTableView = Backbone.View.extend({
 		function getFooterFilters() {
 			const returnValue = [];
 			if (options.configuration.showFooterHtml !== false) {
+				returnValue.push('<tfoot>');
 				returnValue.push('<tr>');
 				for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
 					returnValue.push(`
-						<th data-index="${index}" class="${_.result(options.configuration.columns[index], 'className', '')}">
+						<td data-index="${index}" class="${_.result(options.configuration.columns[index], 'className', '')}">
 							${_.result($.extend({view: options.view }, options.configuration.columns[index]), 'footerHtml', '')}
-						</th>
+						</td>
 					`);
 				}
 				returnValue.push('</tr>');
+				returnValue.push('</tfoot>');
 			}
 			return returnValue.join('');
 		}
