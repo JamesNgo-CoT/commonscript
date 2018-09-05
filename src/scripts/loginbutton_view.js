@@ -12,7 +12,20 @@ const LoginButtonView = Backbone.View.extend({
 
 	tagName: 'form',
 
-	template: _.template(`{{> loginbutton_view.template.html }}`),
+	template: (options) => {
+		if (options.cotLogin.sid) {
+			return `
+				<button type="button" class="btn btn-default btn-logout hidden-print">
+					Logout:
+					<strong>
+						${[options.cotLogin.lastName, options.cotLogin.firstName].filter((value) => value).join(', ') || ''}
+					</strong>
+				</button>
+			`;
+		} else {
+			return '<button type="button" class="btn btn-default btn-login hidden-print">Login</button>';
+		}
+	},
 
 	// METHOD DEFINITION
 

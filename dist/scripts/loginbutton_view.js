@@ -14,7 +14,15 @@ var LoginButtonView = Backbone.View.extend({
 
 	tagName: 'form',
 
-	template: _.template('<% if (cotLogin.sid) { %><button type="button" class="btn btn-default btn-logout hidden-print">Logout: <strong><%- [cotLogin.lastName, cotLogin.firstName].filter((value) => value).join(\', \') || \'\' %></strong></button><% } else { %><button type="button" class="btn btn-default btn-login hidden-print">Login</button><% } %>'),
+	template: function template(options) {
+		if (options.cotLogin.sid) {
+			return '\n\t\t\t\t<button type="button" class="btn btn-default btn-logout hidden-print">\n\t\t\t\t\tLogout:\n\t\t\t\t\t<strong>\n\t\t\t\t\t\t' + ([options.cotLogin.lastName, options.cotLogin.firstName].filter(function (value) {
+				return value;
+			}).join(', ') || '') + '\n\t\t\t\t\t</strong>\n\t\t\t\t</button>\n\t\t\t';
+		} else {
+			return '<button type="button" class="btn btn-default btn-login hidden-print">Login</button>';
+		}
+	},
 
 	// METHOD DEFINITION
 

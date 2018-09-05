@@ -169,11 +169,25 @@ class ExtendedCotLogin extends PrototypeCopyCotLogin {
 
 	showLogin(options) {
 		this.modal = cot_app.showModal($.extend({
-			'body': `{{> extended_cotlogin.body.template.html }}`,
+			'body': `
+				<form>
+					<div class="form-group">
+						<label for="cot_login_username">Username</label>:
+						<input class="form-control" id="cot_login_username">
+					</div>
+					<div class="form-group">
+						<label for="cot_login_password">Password</label>:
+						<input class="form-control" type="password" id="cot_login_password">
+					</div>
+				</form>
+			`,
 
 			'className': 'cot-login-modal',
 
-			'footerButtonsHtml': `{{> extended_cotlogin.footerbuttons.template.html }}`,
+			'footerButtonsHtml': `
+				<button class="btn btn-primary btn-cot-login" type="button">Login</button>
+				<button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>
+			`,
 
 			'onShown': () => {
 				this.modal.find('.btn-cot-login').click(() => {

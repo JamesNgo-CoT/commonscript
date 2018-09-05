@@ -17,7 +17,43 @@ var DataTableView = Backbone.View.extend({
 
 	dataTable: null,
 
-	template: _.template('\n<div class="row">\n\t<div class="col-xs-12">\n\t\t<table width="100%" class="table table-bordered">\n\t\t\t<thead>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th>\n\t\t\t\t\t\t<%- _.result(configuration.columns[index], \'title\') || _.result(configuration.columns[index], \'data\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% if (configuration.showHeaderHtml !== false) { %>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<th data-index="<%- index %>" class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'headerHtml\', \'\') %>\n\t\t\t\t\t</th>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t\t<% } %>\n\t\t\t</thead>\n\t\t\t<tbody></tbody>\n\t\t\t<% if (configuration.showFooterHtml !== false) { %>\n\t\t\t<tfoot>\n\t\t\t\t<tr>\n\t\t\t\t<% for (var index = 0, length = configuration.columns.length; index < length; index++) { %>\n\t\t\t\t\t<td data-index="<%- index %>" class="<%- _.result(configuration.columns[index], \'className\', \'\') %>">\n\t\t\t\t\t\t<%= _.result($.extend({view: view }, configuration.columns[index]), \'footerHtml\', \'\') %>\n\t\t\t\t\t</td>\n\t\t\t\t<% } %>\n\t\t\t\t</tr>\n\t\t\t</tfoot>\n\t\t\t<% } %>\n\t\t</table>\n\t</div>\n</div>\n'),
+	template: function template(options) {
+		function getHeaders() {
+			var returnValue = [];
+			for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
+				returnValue.push('\n\t\t\t\t\t<th>\n\t\t\t\t\t\t' + (_.result(options.configuration.columns[index], 'title') || _.result(options.configuration.columns[index], 'data', '')) + '\n\t\t\t\t\t</th>\n\t\t\t\t');
+			}
+			return returnValue.join('');
+		}
+
+		function getHeaderFilters() {
+			var returnValue = [];
+			if (options.configuration.showHeaderHtml !== false) {
+				returnValue.push('<tr>');
+				for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
+					returnValue.push('\n\t\t\t\t\t\t<th data-index="' + index + '" class="' + _.result(options.configuration.columns[index], 'className', '') + '">\n\t\t\t\t\t\t\t' + _.result($.extend({ view: options.view }, options.configuration.columns[index]), 'headerHtml', '') + '\n\t\t\t\t\t\t</th>\n\t\t\t\t\t');
+				}
+				returnValue.push('</tr>');
+			}
+			return returnValue.join('');
+		}
+
+		function getFooterFilters() {
+			var returnValue = [];
+			if (options.configuration.showFooterHtml !== false) {
+				returnValue.push('<tr>');
+				for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
+					returnValue.push('\n\t\t\t\t\t\t<th data-index="' + index + '" class="' + _.result(options.configuration.columns[index], 'className', '') + '">\n\t\t\t\t\t\t\t' + _.result($.extend({ view: options.view }, options.configuration.columns[index]), 'footerHtml', '') + '\n\t\t\t\t\t\t</th>\n\t\t\t\t\t');
+				}
+				returnValue.push('</tr>');
+			}
+			return returnValue.join('');
+		}
+
+		var returnValue = '\n\t\t\t<div class="row">\n\t\t\t\t<div class="col-xs-12">\n\t\t\t\t\t<table width="100%" class="table table-bordered">\n\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t' + getHeaders() + '\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t' + getHeaderFilters() + '\n\t\t\t\t\t\t</thead>\n\t\t\t\t\t\t<tbody></tbody>\n\t\t\t\t\t\t' + getFooterFilters() + '\n\t\t\t\t\t</table>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t';
+
+		return returnValue;
+	},
 
 	// METHOD DEFINITION
 

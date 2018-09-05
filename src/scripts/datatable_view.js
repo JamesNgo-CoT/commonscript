@@ -13,7 +13,70 @@ const DataTableView = Backbone.View.extend({
 
 	dataTable: null,
 
-	template: _.template(`{{> datatable_view.template.html }}`),
+	template: (options) => {
+		function getHeaders() {
+			const returnValue = [];
+			for (let index = 0, length = options.configuration.columns.length; index < length; index++) {
+				returnValue.push(`
+					<th>
+						${_.result(options.configuration.columns[index], 'title') || _.result(options.configuration.columns[index], 'data', '')}
+					</th>
+				`);
+			}
+			return returnValue.join('');
+		}
+
+		function getHeaderFilters() {
+			const returnValue = [];
+			if (options.configuration.showHeaderHtml !== false) {
+				returnValue.push('<tr>');
+				for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
+					returnValue.push(`
+						<th data-index="${index}" class="${_.result(options.configuration.columns[index], 'className', '')}">
+							${_.result($.extend({view: options.view }, options.configuration.columns[index]), 'headerHtml', '')}
+						</th>
+					`);
+				}
+				returnValue.push('</tr>');
+			}
+			return returnValue.join('');
+		}
+
+		function getFooterFilters() {
+			const returnValue = [];
+			if (options.configuration.showFooterHtml !== false) {
+				returnValue.push('<tr>');
+				for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
+					returnValue.push(`
+						<th data-index="${index}" class="${_.result(options.configuration.columns[index], 'className', '')}">
+							${_.result($.extend({view: options.view }, options.configuration.columns[index]), 'footerHtml', '')}
+						</th>
+					`);
+				}
+				returnValue.push('</tr>');
+			}
+			return returnValue.join('');
+		}
+
+		const returnValue = `
+			<div class="row">
+				<div class="col-xs-12">
+					<table width="100%" class="table table-bordered">
+						<thead>
+							<tr>
+								${getHeaders()}
+							</tr>
+							${getHeaderFilters()}
+						</thead>
+						<tbody></tbody>
+						${getFooterFilters()}
+					</table>
+				</div>
+			</div>
+		`;
+
+		return returnValue;
+	},
 
 	// METHOD DEFINITION
 

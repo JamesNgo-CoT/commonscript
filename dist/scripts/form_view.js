@@ -13,9 +13,13 @@ var FormView = Backbone.View.extend({
 
 	rootPath: '/* @echo SRC_PATH *//',
 
-	template: _.template('\n<div class="formWrapper"></div>\n'),
+	template: function template() {
+		return '<div class="formWrapper"></div>';
+	},
 
-	template_buttons: _.template('\n<div class="hidden-print btns-bar row">\n\t<div class="col-xs-12">\n\t\t<button type="submit" class="btn btn-primary btn-lg btn-submit">Submit</button>\n\t</div>\n</div>\n'),
+	template_buttons: function template_buttons() {
+		return '\n\t\t<div class="hidden-print btns-bar row">\n\t\t\t<div class="col-xs-12">\n\t\t\t\t<button type="submit" class="btn btn-primary btn-lg btn-submit">Submit</button>\n\t\t\t</div>\n\t\t</div>\n\t';
+	},
 
 	// MARK: METHOD DEFINITION
 
@@ -109,7 +113,9 @@ var FormView = Backbone.View.extend({
 				view: _this
 			}).then(function () {
 				var $form = $('.formWrapper form', _this.$el);
-				$form.append(_this.template_buttons({ model: _this.model }));
+				$form.append(_this.template_buttons({
+					model: _this.model
+				}));
 			}).then(function () {
 				var $linkButton = $('a.btn', _this.$el).not('[role="button"]');
 				$linkButton.attr('role', 'button');
