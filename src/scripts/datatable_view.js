@@ -389,8 +389,8 @@ const DataTableView = Backbone.View.extend({
 					} else if (value === '$NOTEMPTY') {
 						search = `${dtColumn.dataSrc()} ne null`;
 					} else {
-						// search = `tolower(${dtColumn.dataSrc()}) eq '${value.toLowerCase().replace('\'', '\\\'')}'`;
-						search = `${dtColumn.dataSrc()} eq '${value.replace('\'', '\'\'')}'`;
+						// search = `tolower(${dtColumn.dataSrc()}) eq '${value.toLowerCase().replace('\'', '\'\'')}'`;
+						search = `${dtColumn.dataSrc()} eq '${value.replace("'", "''")}'`;
 					}
 				} else {
 					search = value;
