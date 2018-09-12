@@ -71,22 +71,22 @@ var ExtendedCotSession = function (_CotSession) {
 			var _this3 = this;
 
 			options = $.extend({
-				'username': '',
-				'password': '',
-				'success': function success() {},
-				'error': function error() {},
-				'always': function always() {}
+				username: '',
+				password: '',
+				success: function success() {},
+				error: function error() {},
+				always: function always() {}
 			}, options);
 
 			var payload = {
-				'app': this.options['appName'],
-				'user': options['username'],
-				'pwd': options['password']
+				app: this.options['appName'],
+				user: options['username'],
+				pwd: options['password']
 			};
 
 			var ajaxSettings = {
-				'method': 'POST',
-				'url': '' + this.options['ccApiOrigin'] + this.options['ccApiPath'] + this.options['ccApiEndpoint']
+				method: 'POST',
+				url: '' + this.options['ccApiOrigin'] + this.options['ccApiPath'] + this.options['ccApiEndpoint']
 			};
 
 			if (ajaxSettings['url'].indexOf('/c3api_auth/v2/AuthService.svc/AuthSet') !== -1) {
@@ -116,10 +116,7 @@ var ExtendedCotSession = function (_CotSession) {
 	return ExtendedCotSession;
 }(CotSession);
 
-var PrototypeCopyCotLogin = function PrototypeCopyCotLogin() {
-	_classCallCheck(this, PrototypeCopyCotLogin);
-};
-
+function PrototypeCopyCotLogin() {}
 PrototypeCopyCotLogin.prototype = cot_login.prototype;
 
 /* exported ExtendedCotLogin */
@@ -223,13 +220,13 @@ var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
 			var _this7 = this;
 
 			this.modal = cot_app.showModal($.extend({
-				'body': '\n\t\t\t\t<form>\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<label for="cot_login_username">Username</label>:\n\t\t\t\t\t\t<input class="form-control" id="cot_login_username">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<label for="cot_login_password">Password</label>:\n\t\t\t\t\t\t<input class="form-control" type="password" id="cot_login_password">\n\t\t\t\t\t</div>\n\t\t\t\t</form>\n\t\t\t',
+				body: '\n\t\t\t\t<form>\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<label for="cot_login_username">Username</label>:\n\t\t\t\t\t\t<input class="form-control" id="cot_login_username">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<label for="cot_login_password">Password</label>:\n\t\t\t\t\t\t<input class="form-control" type="password" id="cot_login_password">\n\t\t\t\t\t</div>\n\t\t\t\t</form>\n\t\t\t',
+				className: 'cot-login-modal',
+				footerButtonsHtml: '\n\t\t\t\t<button class="btn btn-primary btn-cot-login" type="button">Login</button>\n\t\t\t\t<button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>\n\t\t\t',
+				originatingElement: $(this.options['welcomeSelector']).find('a.login'),
+				title: 'User Login',
 
-				'className': 'cot-login-modal',
-
-				'footerButtonsHtml': '\n\t\t\t\t<button class="btn btn-primary btn-cot-login" type="button">Login</button>\n\t\t\t\t<button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>\n\t\t\t',
-
-				'onShown': function onShown() {
+				onShown: function onShown() {
 					_this7.modal.find('.btn-cot-login').click(function () {
 						_this7._login();
 					});
@@ -239,11 +236,7 @@ var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
 							_this7._login();
 						}
 					});
-				},
-
-				'originatingElement': $(this.options['welcomeSelector']).find('a.login'),
-
-				'title': 'User Login'
+				}
 			}, options));
 		}
 	}]);

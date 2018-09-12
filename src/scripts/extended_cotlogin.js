@@ -43,22 +43,22 @@ class ExtendedCotSession extends CotSession {
 
 	login(options) {
 		options = $.extend({
-			'username': '',
-			'password': '',
-			'success': (() => { }),
-			'error': (() => { }),
-			'always': (() => { })
+			username: '',
+			password: '',
+			success: (() => {}),
+			error: (() => {}),
+			always: (() => {})
 		}, options);
 
 		const payload = {
-			'app': this.options['appName'],
-			'user': options['username'],
-			'pwd': options['password']
+			app: this.options['appName'],
+			user: options['username'],
+			pwd: options['password']
 		};
 
 		const ajaxSettings = {
-			'method': 'POST',
-			'url': `${this.options['ccApiOrigin']}${this.options['ccApiPath']}${this.options['ccApiEndpoint']}`
+			method: 'POST',
+			url: `${this.options['ccApiOrigin']}${this.options['ccApiPath']}${this.options['ccApiEndpoint']}`
 		};
 
 		if (ajaxSettings['url'].indexOf('/c3api_auth/v2/AuthService.svc/AuthSet') !== -1) {
@@ -85,7 +85,7 @@ class ExtendedCotSession extends CotSession {
 	}
 }
 
-class PrototypeCopyCotLogin { }
+function PrototypeCopyCotLogin() {}
 PrototypeCopyCotLogin.prototype = cot_login.prototype;
 
 /* exported ExtendedCotLogin */
@@ -103,7 +103,7 @@ class ExtendedCotLogin extends PrototypeCopyCotLogin {
 			ccEndpoint: '',
 			welcomeSelector: '',
 			loginMessage: '',
-			onLogin: (() => { })
+			onLogin: (() => {})
 		}, options);
 
 		if (!this.options['appName']) {
@@ -169,7 +169,7 @@ class ExtendedCotLogin extends PrototypeCopyCotLogin {
 
 	showLogin(options) {
 		this.modal = cot_app.showModal($.extend({
-			'body': `
+			body: `
 				<form>
 					<div class="form-group">
 						<label for="cot_login_username">Username</label>:
@@ -181,15 +181,15 @@ class ExtendedCotLogin extends PrototypeCopyCotLogin {
 					</div>
 				</form>
 			`,
-
-			'className': 'cot-login-modal',
-
-			'footerButtonsHtml': `
+			className: 'cot-login-modal',
+			footerButtonsHtml: `
 				<button class="btn btn-primary btn-cot-login" type="button">Login</button>
 				<button class="btn btn-default" type="button" data-dismiss="modal">Cancel</button>
 			`,
+			originatingElement: $(this.options['welcomeSelector']).find('a.login'),
+			title: 'User Login',
 
-			'onShown': () => {
+			onShown: () => {
 				this.modal.find('.btn-cot-login').click(() => {
 					this._login();
 				});
@@ -199,11 +199,7 @@ class ExtendedCotLogin extends PrototypeCopyCotLogin {
 						this._login();
 					}
 				});
-			},
-
-			'originatingElement': $(this.options['welcomeSelector']).find('a.login'),
-
-			'title': 'User Login',
+			}
 		}, options));
 	}
 }
