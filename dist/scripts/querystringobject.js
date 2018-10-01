@@ -27,7 +27,7 @@ function queryObjectToString(queryObject) {
 
 	if (queryObject) {
 		for (var key in queryObject) {
-			if (queryObject.hasOwnProperty(key) && queryObject[key]) {
+			if (queryObject.hasOwnProperty(key) && queryObject[key] != null) {
 				var name = encodeURIComponent(key);
 				var value = encodeURIComponent(queryObject[key]);
 				queryArray.push(name + '=' + value);

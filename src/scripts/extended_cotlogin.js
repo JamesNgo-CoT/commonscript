@@ -1,9 +1,16 @@
 /* global cot_app cot_login CotSession */
 
+/**
+ * Extends the original CotSession class.
+ */
 class ExtendedCotSession extends CotSession {
 
 	// METHOD DEFINITION
 
+	/**
+	 * Verify if the user is logged in through the Auth API or the browser cookie entry.
+	 * @param {function} serverCheckCallback
+	 */
 	isLoggedIn(serverCheckCallback) {
 		if (typeof serverCheckCallback !== 'function') {
 			return super.isLoggedIn();
@@ -41,6 +48,10 @@ class ExtendedCotSession extends CotSession {
 		});
 	}
 
+	/**
+	 * Logs in the user sending a POST HTTP request. Extended to work with the latest auth API.
+	 * @param {object} options
+	 */
 	login(options) {
 		options = $.extend({
 			username: '',
@@ -85,14 +96,24 @@ class ExtendedCotSession extends CotSession {
 	}
 }
 
+/**
+ * Class to hold cot_login class prototype but not its constructor.
+ */
 function PrototypeCopyCotLogin() {}
 PrototypeCopyCotLogin.prototype = cot_login.prototype;
 
 /* exported ExtendedCotLogin */
+/**
+ * Extends the original cot_login, but without its constructor.
+ */
 class ExtendedCotLogin extends PrototypeCopyCotLogin {
 
 	// CONSTRUCTOR DEFINITION
 
+	/**
+	 * Similar to the original cot_login constructor but using the new ExtendedCotSession.
+	 * @param {object} options
+	 */
 	constructor(options = {}) {
 		super();
 
@@ -122,48 +143,61 @@ class ExtendedCotLogin extends PrototypeCopyCotLogin {
 
 	// METHOD DEFINITION
 
+	/**
+	 * New method, checks if user is logged in.
+	 * @param {object}  options
+	 * @param {boolean} options.serverSide
+	 * @return {Promise}
+	 */
 	checkLogin(options = {}) {
 		if (!options['serverSide']) {
 			if (this.isLoggedIn()) {
-				return Promise.resolve();
+				return Promise.resolve(true);
 			} else {
-				return Promise.reject();
+				return Promise.resolve(false);
 			}
 		}
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			this.isLoggedIn((result) => {
 				if (result === CotSession.LOGIN_CHECK_RESULT_TRUE) {
-					resolve();
+					resolve(true);
 				} else {
-					reject();
+					resolve(false);
 				}
 			});
 		});
 	}
 
+	/**
+	 * A proper copy of the CotSession class' isLoggedIn method.
+	 * @param {function} serverCheckCallback
+	 */
 	isLoggedIn(serverCheckCallback) {
 		return this.session.isLoggedIn(serverCheckCallback);
 	}
 
+	/**
+	 * Checks the login but allowing the user to login if not already logged in.
+	 * @param {object} options
+	 * @return {Promise}
+	 */
 	requireLogin(options) {
-		return Promise.resolve().then(() => {
-			return this.checkLogin(options);
-		}).catch(() => {
-			return new Promise((resolve, reject) => {
-				this.showLogin($.extend({
-					onHidden: () => {
-						this.checkLogin(options).then(() => {
-							resolve();
-						}, () => {
-							reject();
-						});
-					}
-				}, options));
-			});
-		}).catch(() => {
-			this.logout();
-			return Promise.reject();
+		return this.checkLogin(options).then((isLoggedIn) => {
+			if (isLoggedIn === false) {
+				return new Promise((resolve, reject) => {
+					this.showLogin($.extend({
+						onHidden: () => {
+							this.checkLogin(options).then(() => {
+								resolve();
+							}, () => {
+								this.logout();
+								reject();
+							});
+						}
+					}, options));
+				});
+			}
 		});
 	}
 

@@ -457,6 +457,7 @@ var DataTableView = Backbone.View.extend({
 						search = dtColumn.dataSrc() + ' ne null';
 					} else if (value.toLowerCase().indexOf('to') !== -1) {
 						var dates = value.toLowerCase().split('to');
+						console.log('DATES', dates);
 						if (moment(dates[0]).isValid() || moment(dates[1]).isValid()) {
 							var searches = [];
 							if (moment(dates[0]).isValid()) {
@@ -541,6 +542,8 @@ var DataTableView = Backbone.View.extend({
 						if (column.choices.length === 0 || column.choices[0].value != null && column.choices[0].value !== '' || column.choices[0].value == null && column.choices[0].text !== '') {
 							column.choices.unshift({ text: '' });
 						}
+						column.choices[0].text = column.filterLabel || 'Filter by ' + column.title;
+						column.choices[0].value = '';
 						column.headerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<select class="form-control" id="' + column.data + '_header_' + view.cid + '">\n\t\t\t\t\t\t\t\t' + column.choices.map(function (choice) {
 							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + (choice.value != null && choice.value === defaultValue || choice.value == null && choice.text === defaultValue ? ' selected' : '') + '>' + choice.text + '</option>';
 						}).join('') + '\n\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t';
@@ -548,8 +551,8 @@ var DataTableView = Backbone.View.extend({
 							return '<option value="' + (choice.value != null ? choice.value : choice.text) + '"' + (choice.value != null && choice.value === defaultValue || choice.value == null && choice.text === defaultValue ? ' selected' : '') + '>' + choice.text + '</option>';
 						}).join('') + '\n\t\t\t\t\t\t\t</select>\n\t\t\t\t\t\t';
 					} else {
-						column.headerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t';
-						column.footerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + '>\n\t\t\t\t\t\t';
+						column.headerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_header_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_header_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + ' placeholder="' + (column.filterLabel || 'Filter by ' + column.title) + '">\n\t\t\t\t\t\t';
+						column.footerHtml = '\n\t\t\t\t\t\t\t<label class="sr-only" for="' + column.data + '_footer_' + view.cid + '">Filter ' + (column.title || column.data) + '</label>\n\t\t\t\t\t\t\t<input type="text" class="form-control" id="' + column.data + '_footer_' + view.cid + '"' + (defaultValue ? ' value="' + defaultValue + '"' : '') + ' placeholder="' + (column.filterLabel || 'Filter by ' + column.title) + '">\n\t\t\t\t\t\t';
 					}
 
 					if (columnFilter === DataTableView.columnFilters['dateBetween']) {
@@ -569,7 +572,7 @@ var DataTableView = Backbone.View.extend({
 									});
 
 									$element.on('apply.daterangepicker', function (ev, picker) {
-										$(this).val(picker.startDate.format('YYYY/MM/DD/') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
+										$(this).val(picker.startDate.format('YYYY/MM/DD') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
 									});
 
 									$element.on('cancel.daterangepicker', function () {

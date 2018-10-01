@@ -13,6 +13,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /* global cot_app */
 
 /* exported ExtendedCotApp */
+/**
+ * Extends the original cot_app class.
+ */
 var ExtendedCotApp = function (_cot_app) {
 	_inherits(ExtendedCotApp, _cot_app);
 
@@ -28,6 +31,10 @@ var ExtendedCotApp = function (_cot_app) {
 
 		// METHOD DEFINITION
 
+		/**
+   * Sets the document's title. Extended to include the document's metadata title.
+   * @param {string} title
+   */
 		value: function setTitle(title) {
 			if (title && title !== this.name) {
 				document.title = title + " - " + this.name;

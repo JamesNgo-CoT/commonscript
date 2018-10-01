@@ -12,6 +12,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /* global cot_app cot_login CotSession */
 
+/**
+ * Extends the original CotSession class.
+ */
 var ExtendedCotSession = function (_CotSession) {
 	_inherits(ExtendedCotSession, _CotSession);
 
@@ -27,6 +30,10 @@ var ExtendedCotSession = function (_CotSession) {
 
 		// METHOD DEFINITION
 
+		/**
+   * Verify if the user is logged in through the Auth API or the browser cookie entry.
+   * @param {function} serverCheckCallback
+   */
 		value: function isLoggedIn(serverCheckCallback) {
 			var _this2 = this;
 
@@ -65,6 +72,12 @@ var ExtendedCotSession = function (_CotSession) {
 				serverCheckCallback(CotSession.LOGIN_CHECK_RESULT_INDETERMINATE);
 			});
 		}
+
+		/**
+   * Logs in the user sending a POST HTTP request. Extended to work with the latest auth API.
+   * @param {object} options
+   */
+
 	}, {
 		key: 'login',
 		value: function login(options) {
@@ -116,16 +129,28 @@ var ExtendedCotSession = function (_CotSession) {
 	return ExtendedCotSession;
 }(CotSession);
 
+/**
+ * Class to hold cot_login class prototype but not its constructor.
+ */
+
+
 function PrototypeCopyCotLogin() {}
 PrototypeCopyCotLogin.prototype = cot_login.prototype;
 
 /* exported ExtendedCotLogin */
+/**
+ * Extends the original cot_login, but without its constructor.
+ */
 
 var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
 	_inherits(ExtendedCotLogin, _PrototypeCopyCotLogi);
 
 	// CONSTRUCTOR DEFINITION
 
+	/**
+  * Similar to the original cot_login constructor but using the new ExtendedCotSession.
+  * @param {object} options
+  */
 	function ExtendedCotLogin() {
 		var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -160,6 +185,14 @@ var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
 
 	// METHOD DEFINITION
 
+	/**
+  * New method, checks if user is logged in.
+  * @param {object}  options
+  * @param {boolean} options.serverSide
+  * @return {Promise}
+  */
+
+
 	_createClass(ExtendedCotLogin, [{
 		key: 'checkLogin',
 		value: function checkLogin() {
@@ -169,49 +202,60 @@ var ExtendedCotLogin = function (_PrototypeCopyCotLogi) {
 
 			if (!options['serverSide']) {
 				if (this.isLoggedIn()) {
-					return Promise.resolve();
+					return Promise.resolve(true);
 				} else {
-					return Promise.reject();
+					return Promise.resolve(false);
 				}
 			}
 
-			return new Promise(function (resolve, reject) {
+			return new Promise(function (resolve) {
 				_this5.isLoggedIn(function (result) {
 					if (result === CotSession.LOGIN_CHECK_RESULT_TRUE) {
-						resolve();
+						resolve(true);
 					} else {
-						reject();
+						resolve(false);
 					}
 				});
 			});
 		}
+
+		/**
+   * A proper copy of the CotSession class' isLoggedIn method.
+   * @param {function} serverCheckCallback
+   */
+
 	}, {
 		key: 'isLoggedIn',
 		value: function isLoggedIn(serverCheckCallback) {
 			return this.session.isLoggedIn(serverCheckCallback);
 		}
+
+		/**
+   * Checks the login but allowing the user to login if not already logged in.
+   * @param {object} options
+   * @return {Promise}
+   */
+
 	}, {
 		key: 'requireLogin',
 		value: function requireLogin(options) {
 			var _this6 = this;
 
-			return Promise.resolve().then(function () {
-				return _this6.checkLogin(options);
-			}).catch(function () {
-				return new Promise(function (resolve, reject) {
-					_this6.showLogin($.extend({
-						onHidden: function onHidden() {
-							_this6.checkLogin(options).then(function () {
-								resolve();
-							}, function () {
-								reject();
-							});
-						}
-					}, options));
-				});
-			}).catch(function () {
-				_this6.logout();
-				return Promise.reject();
+			return this.checkLogin(options).then(function (isLoggedIn) {
+				if (isLoggedIn === false) {
+					return new Promise(function (resolve, reject) {
+						_this6.showLogin($.extend({
+							onHidden: function onHidden() {
+								_this6.checkLogin(options).then(function () {
+									resolve();
+								}, function () {
+									_this6.logout();
+									reject();
+								});
+							}
+						}, options));
+					});
+				}
 			});
 		}
 	}, {

@@ -475,6 +475,7 @@ const DataTableView = Backbone.View.extend({
 						search = `${dtColumn.dataSrc()} ne null`;
 					} else if (value.toLowerCase().indexOf('to') !== -1) {
 						const dates = value.toLowerCase().split('to');
+						console.log('DATES', dates);
 						if (moment(dates[0]).isValid() || moment(dates[1]).isValid()) {
 							const searches = [];
 							if (moment(dates[0]).isValid()) {
@@ -557,6 +558,8 @@ const DataTableView = Backbone.View.extend({
 						if (column.choices.length === 0 || (column.choices[0].value != null && column.choices[0].value !== '') || (column.choices[0].value == null && column.choices[0].text !== '')) {
 							column.choices.unshift({ text: '' });
 						}
+						column.choices[0].text = column.filterLabel || `Filter by ${column.title}`;
+						column.choices[0].value = '';
 						column.headerHtml = `
 							<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
 							<select class="form-control" id="${column.data}_header_${view.cid}">
@@ -572,11 +575,11 @@ const DataTableView = Backbone.View.extend({
 					} else {
 						column.headerHtml = `
 							<label class="sr-only" for="${column.data}_header_${view.cid}">Filter ${column.title || column.data}</label>
-							<input type="text" class="form-control" id="${column.data}_header_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
+							<input type="text" class="form-control" id="${column.data}_header_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''} placeholder="${column.filterLabel || 'Filter by ' + column.title}">
 						`;
 						column.footerHtml = `
 							<label class="sr-only" for="${column.data}_footer_${view.cid}">Filter ${column.title || column.data}</label>
-							<input type="text" class="form-control" id="${column.data}_footer_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''}>
+							<input type="text" class="form-control" id="${column.data}_footer_${view.cid}"${defaultValue ? ' value="' + defaultValue + '"' : ''} placeholder="${column.filterLabel || 'Filter by ' + column.title}">
 						`;
 					}
 
@@ -595,7 +598,7 @@ const DataTableView = Backbone.View.extend({
 									});
 
 									$element.on('apply.daterangepicker', function (ev, picker) {
-										$(this).val(picker.startDate.format('YYYY/MM/DD/') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
+										$(this).val(picker.startDate.format('YYYY/MM/DD') + ' to ' + picker.endDate.format('YYYY/MM/DD')).change();
 									});
 
 									$element.on('cancel.daterangepicker', function () {

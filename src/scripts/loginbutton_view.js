@@ -1,9 +1,14 @@
 /* exported LoginButtonView */
+/**
+ * A Backbone view class for the app's login button.
+ */
 const LoginButtonView = Backbone.View.extend({
 
 	// PROPERTY DEFINITION
 
 	className: 'LoginButtonView',
+
+	cotLogin: null,
 
 	events: {
 		'click .btn-login': 'doLogin',
@@ -12,37 +17,52 @@ const LoginButtonView = Backbone.View.extend({
 
 	tagName: 'form',
 
-	template: (options) => {
-		if (options.cotLogin.sid) {
-			return `
-				<button type="button" class="btn btn-default btn-logout hidden-print">
-					Logout:
-					<strong>
-						${[options.cotLogin.lastName, options.cotLogin.firstName].filter((value) => value).join(', ') || ''}
-					</strong>
-				</button>
-			`;
-		} else {
-			return '<button type="button" class="btn btn-default btn-login hidden-print">Login</button>';
+	// METHOD DEFINITION
+
+	/**
+	 * Handles login.
+	 */
+	doLogin: function doLogin(event) {
+		event.preventDefault();
+
+		this.cotLogin.showLogin({
+			originatingElement: $('button', this.$el),
+			onHidden: () => {
+				this.cotLogin.checkLogin().then(() => {
+					this.render();
+					Backbone.history.stop();
+					Backbone.history.start();
+				}, () => {
+					this.render();
+					if (this.cotLogin.sid) {
+						this.cotLogin.logout();
+					}
+				});
+			}
+		});
+	},
+
+	/**
+	 * Handles logout.
+	 */
+	doLogout: function doLogout(event) {
+		event.preventDefault();
+		if (this.cotLogin != null) {
+			this.cotLogin.logout();
 		}
 	},
 
-	// METHOD DEFINITION
-
-	doLogin: function doLogin(event) {
-		event.preventDefault();
-		const $originatingElement = $('button', this.$el);
-		this.trigger('login', $originatingElement);
-	},
-
-	doLogout: function doLogout(event) {
-		event.preventDefault();
-		this.trigger('logout');
-	},
-
-	render: function render(extendedCotLogin) {
-		this.$el.html(this.template({
-			cotLogin: extendedCotLogin
-		}));
+	/**
+	 * Renders the login button.
+	 * @param {ExtendedCotLogin} cotLogin
+	 */
+	render: function render(cotLogin) {
+		this.cotLogin = cotLogin || this.cotLogin;
+		if (this.cotLogin != null && this.cotLogin.sid != null && this.cotLogin.sid != '') {
+			const signedInUser = [this.cotLogin.lastName, this.cotLogin.firstName].filter((value) => value).join(', ') || '';
+			this.$el.html(`<button type="button" class="btn btn-default btn-logout hidden-print">Logout: <strong>${signedInUser}</strong></button>`);
+		} else {
+			this.$el.html('<button type="button" class="btn btn-default btn-login hidden-print">Login</button>');
+		}
 	}
 });
