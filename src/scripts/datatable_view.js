@@ -475,7 +475,7 @@ const DataTableView = Backbone.View.extend({
 						search = `${dtColumn.dataSrc()} ne null`;
 					} else if (value.toLowerCase().indexOf('to') !== -1) {
 						const dates = value.toLowerCase().split('to');
-						console.log('DATES', dates);
+						// console.log('DATES', dates);
 						if (moment(dates[0]).isValid() || moment(dates[1]).isValid()) {
 							const searches = [];
 							if (moment(dates[0]).isValid()) {

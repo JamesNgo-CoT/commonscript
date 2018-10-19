@@ -21,7 +21,7 @@ var DataTableView = Backbone.View.extend({
 		function getHeaders() {
 			var returnValue = [];
 			for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
-				returnValue.push('\n\t\t\t\t\t<th>\n\t\t\t\t\t\t' + (_.result(options.configuration.columns[index], 'title') || _.result(options.configuration.columns[index], 'data', '')) + '\n\t\t\t\t\t</th>\n\t\t\t\t');
+				returnValue.push('\n\t\t\t\t\t<th scope="row">\n\t\t\t\t\t\t' + (_.result(options.configuration.columns[index], 'title') || _.result(options.configuration.columns[index], 'data', '')) + '\n\t\t\t\t\t</th>\n\t\t\t\t');
 			}
 			return returnValue.join('');
 		}
@@ -457,7 +457,7 @@ var DataTableView = Backbone.View.extend({
 						search = dtColumn.dataSrc() + ' ne null';
 					} else if (value.toLowerCase().indexOf('to') !== -1) {
 						var dates = value.toLowerCase().split('to');
-						console.log('DATES', dates);
+						// console.log('DATES', dates);
 						if (moment(dates[0]).isValid() || moment(dates[1]).isValid()) {
 							var searches = [];
 							if (moment(dates[0]).isValid()) {
