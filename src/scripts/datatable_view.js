@@ -143,6 +143,14 @@ const DataTableView = Backbone.View.extend({
 				$.extend(dt_configuration, {
 					ajax: (data, callback) => {
 
+						// if (this.draw == null) {
+						// 	this.draw = 0;
+						// }
+
+						// data.draw = this.draw;
+						// this.draw = this.draw + 1;
+
+
 						// TODO.
 						// const defaultFetchParameters = _.result(this.collection, 'fetchParameters');
 
@@ -209,6 +217,12 @@ const DataTableView = Backbone.View.extend({
 						this.collection.fetch({
 							fetchParameters: fetchParameters
 						}).then(complete, complete);
+						/*
+
+						$.ajax({
+							url: '...?' + query string
+						})
+						*/
 					}
 				});
 			} else {

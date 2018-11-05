@@ -21,7 +21,7 @@ var DataTableView = Backbone.View.extend({
 		function getHeaders() {
 			var returnValue = [];
 			for (var index = 0, length = options.configuration.columns.length; index < length; index++) {
-				returnValue.push('\n\t\t\t\t\t<th scope="row">\n\t\t\t\t\t\t' + (_.result(options.configuration.columns[index], 'title') || _.result(options.configuration.columns[index], 'data', '')) + '\n\t\t\t\t\t</th>\n\t\t\t\t');
+				returnValue.push('\n\t\t\t\t\t<th>\n\t\t\t\t\t\t' + (_.result(options.configuration.columns[index], 'title') || _.result(options.configuration.columns[index], 'data', '')) + '\n\t\t\t\t\t</th>\n\t\t\t\t');
 			}
 			return returnValue.join('');
 		}
@@ -124,6 +124,14 @@ var DataTableView = Backbone.View.extend({
 				$.extend(dt_configuration, {
 					ajax: function ajax(data, callback) {
 
+						// if (this.draw == null) {
+						// 	this.draw = 0;
+						// }
+
+						// data.draw = this.draw;
+						// this.draw = this.draw + 1;
+
+
 						// TODO.
 						// const defaultFetchParameters = _.result(this.collection, 'fetchParameters');
 
@@ -189,6 +197,11 @@ var DataTableView = Backbone.View.extend({
 						_this.collection.fetch({
 							fetchParameters: fetchParameters
 						}).then(complete, complete);
+						/*
+      	$.ajax({
+      	url: '...?' + query string
+      })
+      */
 					}
 				});
 			} else {
